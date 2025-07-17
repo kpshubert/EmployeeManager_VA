@@ -4,12 +4,6 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { faAsterisk, faCheckCircle, faUser } from '@fortawesome/free-solid-svg-icons';
 //import { catchError } from 'rxjs/operators';
 //import { throwError } from 'rxjs';
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
-}
 
 interface Employee {
   id: number,
@@ -32,8 +26,8 @@ interface Department {
     styleUrl: './app.component.css',
     standalone: false
 })
+
 export class AppComponent implements OnInit {
-  public forecasts: WeatherForecast[] = [];
   public employees: Employee[] = [];
   public departments: Department[] = [{ id: 0, name: 'test'}, { id: 1, name: 'test2'}, {id: 3, name: 'test3' } ];
 
@@ -55,20 +49,8 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
-    this.getForecasts();
     this.getEmployees(0, 'list', '');
     this.getDepartments(0, 'list', '');
-  }
-
-  getForecasts() {
-    this.http.get<WeatherForecast[]>('/weatherforecast').subscribe(
-      (result) => {
-        this.forecasts = result;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
   }
 
   getEmployees(idIn:number, modeIn:string, filterIn:string) {
