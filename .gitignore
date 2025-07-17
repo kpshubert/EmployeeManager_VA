@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/EmployeeManager_VA.Server/bin
+/EmployeeManager_VA.Server/obj
+/.vs
+/employeemanager_va.client/.vscode
+/employeemanager_va.client/obj

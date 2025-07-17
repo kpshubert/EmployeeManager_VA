@@ -1,0 +1,26 @@
+@EmployeeManager_VA.Server_HostAddress = http://localhost:5069
+
+GET {{EmployeeManager_VA.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{EmployeeManager_VA.Server_HostAddress}}/employee/
+Accept: application/json
+
+###
+
+POST {{EmployeeManager_VA.Server_HostAddress}}/employee/
+accept: application/json
+
+###
+
+GET {{EmployeeManager_VA.Server_HostAddress}}/department/
+Accept: application/json
+
+###
+
+POST {{EmployeeManager_VA.Server_HostAddress}}/department/
+accept: application/json
+
+###
