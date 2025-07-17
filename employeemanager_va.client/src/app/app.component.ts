@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
         }
 
         if (modeIn !== 'list' && result.length === 1) {
-          this.employee = this.employees[0];
+          this.employee = result[0];
         }
       },
       (error) => {
