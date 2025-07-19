@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCoffee } from '@fortawesome/free-solid-svg-icons';
+import * as $ from "jquery";
 
 @NgModule({ declarations: [
         AppComponent
@@ -21,4 +22,5 @@ import { faCoffee } from '@fortawesome/free-solid-svg-icons';
 export class AppModule {
   faCoffee = faCoffee;
   reactiveFormsModule = ReactiveFormsModule;
+  $ = $;
 }
