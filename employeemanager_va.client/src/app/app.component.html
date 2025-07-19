@@ -1,7 +1,17 @@
+
 <div class="row mb-3">
   <div class="col-md-1"></div>
   <div class="col-md-10">
     <h1 id="tableLabel">Employee Management</h1>
+  </div>
+  <div class="col-md-1"></div>
+</div>
+<div class="row mb-3">
+  <div class="col-md-1"></div>
+  <div class="col-md-10">
+    <div class="d-flex justify-content-start">
+      <button id="btnAddEmployee" (click)="addButtonClick($event)" class="btn btn-success">Add New</button>
+    </div>
   </div>
   <div class="col-md-1"></div>
 </div>
@@ -29,7 +39,14 @@
                 {
                 <tr>
                   <td>
-                    <button (click)="editButtonClick($event, employeesItem.id)" class="btn btn-success" type="button"><fa-icon [icon]="faUser"></fa-icon>&nbsp;Edit</button>
+                    <div class="row">
+                      <div class="col-md-auto">
+                        <button (click)="editButtonClick($event, employeesItem.id)" class="btn btn-success" type="button"><fa-icon [icon]="faUser"></fa-icon>&nbsp;Edit</button>
+                      </div>
+                      <div class="col-md-auto">
+                        <button (click)="deleteButtonClick($event, employeesItem.id)" class="btn btn-danger" type="button"><fa-icon [icon]="faWindowClose"></fa-icon>&nbsp;Delete</button>
+                      </div>
+                    </div>
                   </td>
                   <td>
                     {{ employeesItem.firstName }}
@@ -60,13 +77,13 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeeFirstName" class="form-control" required type="text" [(value)]="employee.firstName" formControlName="firstName" />
+              <input id="txtEmployeeFirstName" class="form-control" required type="text" [(ngModel)]="this.employee.firstName" formControlName="firstName" />
               <label for="txtEmployeeFirstName" class="form-label">First Name&nbsp;<fa-icon class="text-danger" [icon]="faAsterisk"></fa-icon></label>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeeLastName" class="form-control" required type="text" [(value)]="employee.lastName" formControlName="lastName" />
+              <input id="txtEmployeeLastName" class="form-control" required type="text" [(ngModel)]="this.employee.lastName" formControlName="lastName" />
               <label for="txtEmployeeLastName" class="form-label">Last Name&nbsp;<fa-icon class="text-danger" [icon]="faAsterisk"></fa-icon></label>
             </div>
           </div>
@@ -74,24 +91,26 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeePhone" class="form-control" type="tel" [(value)]="employee.phone" formControlName="phone" />
+              <input id="txtEmployeePhone" class="form-control" type="tel" [(ngModel)]="this.employee.phone" formControlName="phone" />
               <label for="txtEmployeePhone" class="form-label">Phone</label>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeeEmail" class="form-control" type="email" [(value)]="employee.phone" formControlName="phone" />
-              <label for="txtEmployeeEmail" class="form-label">Phone</label>
+              <input id="txtEmployeeEmail" class="form-control" type="email" [(ngModel)]="this.employee.email" formControlName="phone" />
+              <label for="txtEmployeeEmail" class="form-label">Email</label>
             </div>
           </div>
         </div>
         <div class="row mb-3">
           <div class="col-md-12">
             <div class="form-floating mb-1">
-              <select id="selEmployeeDepartment" class="form-select" [(value)]="employee.departmentId">
+              <select id="selEmployeeDepartment" (change)="departmentSelectChange($event)" class="form-select" [(value)]="this.employee.departmentIdString">
                 <option value="">--please select--</option>
                 @for(option of departments; track option.id) {
-                <option value="{{ option.id }}">{{ option.name }}</option>
+                  <option value="{{ option.idString }}">
+                    {{ option.name }}
+                  </option>
                 }
               </select>
               <label for="selEmployeeDepartment">Department</label>
@@ -101,7 +120,7 @@
       </fieldset>
       <div class="row mb-3">
         <div class="col-md-12">
-          <button class="btn btn-success" type="submit"><fa-icon [icon]="faCheckCircle"></fa-icon>&nbsp;Submit</button>
+          <button class="btn btn-success" type="submit"><fa-icon [(icon)]="saveButtonIcon"></fa-icon>&nbsp;{{ this.submitButtonText }}</button>
         </div>
       </div>
     </div>

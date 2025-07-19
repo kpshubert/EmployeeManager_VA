@@ -2,7 +2,6 @@ import { provideHttpClient, withInterceptorsFromDi, withFetch } from '@angular/c
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms'
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -12,12 +11,14 @@ import { faCoffee } from '@fortawesome/free-solid-svg-icons';
 @NgModule({ declarations: [
         AppComponent
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule,
-        NgbModule,
-        FontAwesomeModule,
-        ReactiveFormsModule], providers: [provideHttpClient(withFetch(), withInterceptorsFromDi())] })
+  bootstrap: [AppComponent], imports: [BrowserModule,
+    AppRoutingModule,
+    NgbModule,
+    FontAwesomeModule,
+    ReactiveFormsModule],
+  providers: [provideHttpClient(withFetch(), withInterceptorsFromDi())],
+})
 export class AppModule {
   faCoffee = faCoffee;
-  reactiveFormsModule = ReactiveFormsModule
+  reactiveFormsModule = ReactiveFormsModule;
 }
