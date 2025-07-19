@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+//import * as $ from 'jquery';
 //import { catchError } from 'rxjs/operators';
 //import { throwError } from 'rxjs';
 
@@ -45,6 +46,10 @@ export class AppComponent implements OnInit {
     departmentName: '',
     formMode: 'add'
   };
+
+  ngAfterViewInit() {
+    this.setUpJqueryTestButton();
+  }
 
   public department: Department = {
     id: 0,
@@ -174,5 +179,12 @@ export class AppComponent implements OnInit {
     const selectedValueNumber = parseInt(selectedValue);
 
     this.employee.departmentId = selectedValueNumber;
+  }
+
+  setUpJqueryTestButton() {
+    $("#btnJqueryTest").css('color', 'blue');
+    $("#btnJqueryTest").on('click', function () {
+      alert('Jquery event test!');
+    });
   }
 }
