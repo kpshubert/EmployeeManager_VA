@@ -1,6 +1,7 @@
 ﻿using EmployeeManager_VA.Server.Data;
 using EmployeeManager_VA.Server.Models;
 using EmployeeManager_VA.Server.ViewModels;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
@@ -40,10 +41,16 @@ namespace EmployeeManager_VA.Server.Controllers
                     var newEmployeeViewModel = new EmployeeViewModel();
 
                     Utilities.Utilities.CopySharedPropertyValues<TEmEmployee, EmployeeViewModel>(employee, newEmployeeViewModel);
+                    newEmployeeViewModel.DepartmentId = employee.DepartmentId;
+                    newEmployeeViewModel.DepartmentIdString = newEmployeeViewModel.DepartmentId.ToString();
 
                     if (employee.Department != null && employee.Department.Name != null)
                     {
                         newEmployeeViewModel.DepartmentName = employee.Department.Name;
+                        if (mode != "list")
+                        {
+                            newEmployeeViewModel.FormMode = "edit";
+                        }
                     }
 
                     returnValue.Add(newEmployeeViewModel);
@@ -51,6 +58,12 @@ namespace EmployeeManager_VA.Server.Controllers
             }
             else
             {
+                var newEmployeeViewModel = new EmployeeViewModel
+                {
+                    FormMode = "add",
+                    DepartmentId = 0,
+                    DepartmentIdString = "0"
+                };
                 returnValue.Add(new EmployeeViewModel());
             }
 
@@ -60,7 +73,91 @@ namespace EmployeeManager_VA.Server.Controllers
         [HttpPost(Name = "PostEmployee")]
         public IActionResult Post([FromBody] EmployeeViewModel employeeViewModel)
         {
-            return Ok("Received");
+            IActionResult actionResult = BadRequest("Unknown Error");
+
+            if (employeeViewModel != null)
+            {
+                if (employeeViewModel.FormMode == "add")
+                {
+                    var newTEmEmployee = new TEmEmployee();
+
+                    Utilities.Utilities.CopySharedPropertyValues<EmployeeViewModel, TEmEmployee>(employeeViewModel, newTEmEmployee);
+
+                    employeeManagerDbContext.TEmEmployees.Add(newTEmEmployee);
+                    var addResult = employeeManagerDbContext.SaveChanges(true);
+
+                    if (addResult > 0)
+                    {
+                        actionResult = Ok("Employee Added.");
+                    }
+                    else
+                    {
+                        actionResult = BadRequest("Could not be added.");
+                    }
+                }
+                else
+                {
+                    var rowToUpdate = employeeManagerDbContext.TEmEmployees.Where(e => e.Id == employeeViewModel.Id).FirstOrDefault();
+
+                    if (rowToUpdate != null)
+                    {
+                        Utilities.Utilities.CopySharedPropertyValues<EmployeeViewModel, TEmEmployee>(employeeViewModel, rowToUpdate);
+
+                        employeeManagerDbContext.TEmEmployees.Update(rowToUpdate);
+
+                        var updateResult = employeeManagerDbContext.SaveChanges();
+
+                        if (updateResult > 0)
+                        {
+                            actionResult = Ok("Employee Updated");
+                        }
+                        else
+                        {
+                            actionResult = BadRequest("Employee Update Failed.");
+                        }
+                    }
+                    else
+                    {
+                        actionResult = BadRequest("Employee Record not found.");
+                    }
+                }
+            }
+            return actionResult;
+        }
+
+        [HttpDelete(Name = "DeleteEmployee")]
+        public IActionResult Delete(int? Id)
+        {
+            IActionResult returnValue;
+
+            if (Id == null)
+            {
+                returnValue = BadRequest("Must specify an ID.");
+            }
+            else
+            {
+                var employeeRow = employeeManagerDbContext.TEmEmployees.Where(e => e.Id == Id).FirstOrDefault();
+
+                if (employeeRow != null)
+                {
+                    employeeManagerDbContext.TEmEmployees.Remove(employeeRow);
+                    var deleteResult = employeeManagerDbContext.SaveChanges();
+
+                    if (deleteResult > 0)
+                    {
+                        returnValue = Ok("Employee Deleted Successfully.");
+                    }
+                    else
+                    {
+                        returnValue = NotFound("Employee Delete Failed.");
+                    }
+                }
+                else
+                {
+                    returnValue = NotFound("Employee Not Found.");
+                }
+            }
+            return returnValue;
         }
     }
 }
