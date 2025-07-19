@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
-import { faAsterisk, faCheckCircle, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 //import { catchError } from 'rxjs/operators';
 //import { throwError } from 'rxjs';
 
@@ -12,11 +12,14 @@ interface Employee {
   phone: string,
   email: string,
   departmentId: number,
-  departmentName: string
+  departmentIdString: string,
+  departmentName: string,
+  formMode: string
 }
 
 interface Department {
   id: number,
+  idString: string,
   name: string
 }
 
@@ -29,7 +32,7 @@ interface Department {
 
 export class AppComponent implements OnInit {
   public employees: Employee[] = [];
-  public departments: Department[] = [{ id: 0, name: 'test'}, { id: 1, name: 'test2'}, {id: 3, name: 'test3' } ];
+  public departments: Department[] = [];
 
   public employee: Employee = {
     id: 0,
@@ -38,11 +41,14 @@ export class AppComponent implements OnInit {
     phone: '',
     email: '',
     departmentId: 0,
-    departmentName: ''
+    departmentIdString: '0',
+    departmentName: '',
+    formMode: 'add'
   };
 
   public department: Department = {
     id: 0,
+    idString: '0',
     name: ''
   };
 
@@ -65,6 +71,13 @@ export class AppComponent implements OnInit {
 
         if (modeIn !== 'list' && result.length === 1) {
           this.employee = result[0];
+          if (this.employee.formMode === 'edit') {
+            this.saveButtonIcon = faSave;
+            this.submitButtonText = 'Update';
+          } else {
+            this.saveButtonIcon = faPlusCircle;
+            this.submitButtonText = "Add";
+          }
         }
       },
       (error) => {
@@ -73,11 +86,36 @@ export class AppComponent implements OnInit {
     )
   }
 
+  addEmployee() {
+    this.employee.id = 0;
+    this.employee.firstName = '';
+    this.employee.lastName = '';
+    this.employee.phone = '';
+    this.employee.email = '';
+    this.employee.departmentId = 0;
+    this.employee.departmentIdString = '0';
+    this.employee.departmentName = '';
+    this.employee.formMode = 'add';
+    this.saveButtonIcon = faPlusCircle;
+  }
+
   postEmployeeData() {
     const httpHeaders = new HttpHeaders({ 'content-type': 'application/json' });
 
     this.http.post('/employee', this.employee, { headers: httpHeaders }).subscribe(response => {
       console.log(response);
+    });
+
+    this.getEmployees(0, 'list', '');
+  }
+
+  deleteEmployee(idIn: number) {
+    const parms = new HttpParams().set('id', idIn);
+    this.http.delete('/employee', {params: parms}).subscribe({
+      next: data => {
+        this.getEmployees(0, 'list', '');
+      },
+      error: error => { error.message }
     });
   }
 
@@ -101,6 +139,10 @@ export class AppComponent implements OnInit {
   faCheckCircle = faCheckCircle;
   faAsterisk = faAsterisk;
   faUser = faUser;
+  faWindowClose = faWindowClose;
+  faSave = faSave;
+  saveButtonIcon = faPlusCircle;
+  submitButtonText = 'Add';
 
   employeeForm = new FormGroup({
     firstName: new FormControl(this.employee.firstName, Validators.required),
@@ -116,5 +158,21 @@ export class AppComponent implements OnInit {
 
   editButtonClick(event: any, id: number) {
     this.getEmployees(id, '', '');
+  }
+
+  deleteButtonClick(event: any, id: number) {
+    this.deleteEmployee(id);
+  }
+
+  addButtonClick(event: any) {
+    this.addEmployee();
+  }
+
+  departmentSelectChange(event: Event) {
+
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    const selectedValueNumber = parseInt(selectedValue);
+
+    this.employee.departmentId = selectedValueNumber;
   }
 }

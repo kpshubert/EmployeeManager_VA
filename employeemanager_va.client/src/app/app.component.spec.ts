@@ -10,10 +10,10 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [AppComponent],
-    imports: [],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents();
+      declarations: [AppComponent],
+      imports: [],
+      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -30,34 +30,36 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-    it('should retreive the requested employee from the server', () => {
-      const mockEmployee = {
-        id: 0,
-        firstName: 'test',
-        lastName: 'employee',
-        phone: '5018888888',
-        email: 'test@testserver.com',
-        departmentId: 0
-        departmentName: 'Chief Cook and Bottle Washer'
-      };
+  it('should retrieve the requested employee from the server', () => {
+    const mockEmployees = [{
+      id: 0,
+      firstName: 'test',
+      lastName: 'employee',
+      phone: '5018888888',
+      email: 'test@testserver.com',
+      departmentId: 0,
+      departmentIdString: '0',
+      departmentName: 'Chief Cook and Bottle Washer',
+      formMode: 'edit'
+    }];
 
-      it('should retreive the requested department from the server', () => {
-        const mockDepartment = {
-          id: 0,
-          name: 'test',
-        };
+    const employeeReq = httpMock.expectOne('/employee');
+    expect(employeeReq.request.method).toEqual('GET');
+    employeeReq.flush(mockEmployees);
+    component.ngOnInit();
+    expect(component.employees).toEqual(mockEmployees);
+  });
 
-        component.ngOnInit();
-
-        const employeeReq = httpMock.expectOne('/employee');
-        expect(employeeReq.request.method).toEqual('GET');
-        employeeReq.flush(mockEmployee);
-
-        const departmentReq = httpMock.expectOne('/department');
-        expect(departmentReq.request.method).toEqual('GET');
-        departmentReq.flush(mockDepartment);
-
-        expect(component.employee).toEqual(mockEmployee);
-        //expect(component.department).toEqual(mockDepartment);
+  it('should retrieve the requested department from the server', () => {
+    const mockDepartment = {
+      id: 0,
+      idString: '0',
+      name: 'test',
+    }
+    const departmentReq = httpMock.expectOne('/department');
+    expect(departmentReq.request.method).toEqual('GET');
+    departmentReq.flush(mockDepartment);
+    component.ngOnInit();
+    expect(component.department).toEqual(mockDepartment);
   });
 });
