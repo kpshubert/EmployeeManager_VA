@@ -37,6 +37,8 @@ namespace EmployeeManager_VA.Server.Controllers
 
                     Utilities.Utilities.CopySharedPropertyValues<TEmDepartment, DepartmentViewModel>(department, newDeparment);
 
+                    newDeparment.IdString = newDeparment.Id.ToString();
+
                     returnValue.Add(newDeparment);
                 }
             }

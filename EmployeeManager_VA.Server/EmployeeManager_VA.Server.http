@@ -10,6 +10,11 @@ accept: application/json
 
 ###
 
+DELETE {{EmployeeManager_VA.Server_HostAddress}}/employee/
+accept: application/json
+
+####
+
 GET {{EmployeeManager_VA.Server_HostAddress}}/department/
 Accept: application/json
 
