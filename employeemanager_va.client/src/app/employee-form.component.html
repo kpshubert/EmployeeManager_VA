@@ -52,7 +52,7 @@
         <div class="row mb-3">
           <div class="col-md-12">
             <div class="form-floating mb-1">
-              <select id="selEmployeeDepartment" (change)="departmentSelectChange($event)" class="form-select" [(ngModel)]="this.employee.departmentIdString" name="departmentIdString">
+              <select id="selEmployeeDepartment" required (change)="departmentSelectChange($event)" class="form-select" [(ngModel)]="this.employee.departmentIdString" name="departmentIdString">
                 <option value="">--please select--</option>
                 @for(option of departments; track option.id) {
                   <option value="{{ option.idString }}">
