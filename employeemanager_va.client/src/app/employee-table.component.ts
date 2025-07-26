@@ -5,7 +5,6 @@ import { faWindowClose, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Table, TableModule } from 'primeng/table';
 import { EmployeeService } from './employee.service';
 import { Employee } from './models/employee';
-//import { firstValueFrom, delay } from 'rxjs';
 
 @Component({
   selector: 'employee-table',
@@ -46,10 +45,14 @@ export class EmployeeTable implements OnInit {
   faUser = faUser;
 
   editButtonClick(event: any, idIn: number) {
-    console.log('Running editButtonClick');
     this.reloadAfterClientEditClick.emit(idIn);
   }
-  deleteButtonClick(event: any, idIn: number) {
-    this.employeeService.deleteEmployee(idIn);
+  async deleteButtonClick(event: any, idIn: number) {
+    await this.employeeService.deleteEmployee(idIn);
+    this.refreshDataTable();
+  }
+
+  async refreshDataTable() {
+    this.employees = await this.employeeService.getEmployees(0, 'list', '');
   }
 }
