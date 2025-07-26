@@ -2,6 +2,7 @@
 {
     public class EmployeeViewModel
     {
+        public int RowNum { get; set; } = 0;
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
