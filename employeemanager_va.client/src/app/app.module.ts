@@ -20,9 +20,7 @@ import * as $ from "jquery";
 //import { EmployeeTable } from './employee-table.component';
 
 @NgModule({
-  declarations: [
-    EmployeeFormComponent
-  ],
+  declarations: [],
   bootstrap: [EmployeeFormComponent],
   imports: [BrowserModule,
     AppRoutingModule,
@@ -34,7 +32,8 @@ import * as $ from "jquery";
     IconField,
     InputIconModule,
     EmployeeTable,
-    FaIconComponent
+    FaIconComponent,
+    EmployeeFormComponent
   ],
   providers: [provideHttpClient(withFetch(),
     withInterceptorsFromDi()),
