@@ -1,0 +1,58 @@
+    @if (employees.length > 0) {
+<p-table #dtEmployees
+         [value]="this.employees"
+         [columns]="columnNames"
+         [paginator]="true"
+         showGridLines
+         stripedRows
+         [rows]="3"
+         [rowsPerPageOptions]="[3, 5, 10, 15]"
+         [globalFilterFields]="['firstName', 'lastName', 'email', 'phone', 'departmentName']"
+         sortMode="multiple">
+  <ng-template #caption>
+    <div class="flex">
+      <p-iconfield iconPosition="left" class="ml-auto">
+        <p-inputicon>
+          <i class="pi pi-search"></i>
+        </p-inputicon>
+        <div class="d-flex justify-content-end">
+          <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" placeholder="Search keyword" />
+        </div>
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columnNames>
+    <tr>
+      <th *ngFor="let col of columnNames" pSortableColumn="col.name">
+        {{ col.value }}
+        @if (col.filter !== '') {
+        <p-columnFilter type="text" field="col.filter" display="menu" />
+        }
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-employeesItem>
+    <tr>
+      <td>
+        <div class="row">
+          <div class="col-md-auto">
+            <button (click)="editButtonClick($event, employeesItem.id)" class="btn btn-success" type="button"><span class="fas fa-user"></span>&nbsp;Edit</button>
+          </div>
+          <div class="col-md-auto">
+            <button (click)="deleteButtonClick($event, employeesItem.id)" class="btn btn-danger" type="button"><span class="fas fa-window-close"></span>&nbsp;Delete</button>
+          </div>
+        </div>
+      </td>
+      <td>{{ employeesItem.firstName }}</td>
+      <td>{{ employeesItem.lastName }}</td>
+      <td>{{ employeesItem.email }}</td>
+      <td>{{ employeesItem.phone }}</td>
+      <td>{{ employeesItem.departmentName }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+    } @else {
+<div class="d-flex justify-content-center mt-2">
+  <h6 class="alert alert-info">No employees found...</h6>
+</div>
+    }

@@ -1,11 +1,8 @@
 ﻿using EmployeeManager_VA.Server.Data;
 using EmployeeManager_VA.Server.Models;
 using EmployeeManager_VA.Server.ViewModels;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using System.Diagnostics.Eventing.Reader;
 
 namespace EmployeeManager_VA.Server.Controllers
 {
@@ -36,6 +33,7 @@ namespace EmployeeManager_VA.Server.Controllers
 
             if (employees.Count > 0)
             {
+                var currentRow = 0;
                 foreach (var employee in employees)
                 {
                     var newEmployeeViewModel = new EmployeeViewModel();
@@ -43,6 +41,7 @@ namespace EmployeeManager_VA.Server.Controllers
                     Utilities.Utilities.CopySharedPropertyValues<TEmEmployee, EmployeeViewModel>(employee, newEmployeeViewModel);
                     newEmployeeViewModel.DepartmentId = employee.DepartmentId;
                     newEmployeeViewModel.DepartmentIdString = newEmployeeViewModel.DepartmentId.ToString();
+                    newEmployeeViewModel.RowNum = currentRow;
 
                     if (employee.Department != null && employee.Department.Name != null)
                     {
@@ -54,6 +53,7 @@ namespace EmployeeManager_VA.Server.Controllers
                     }
 
                     returnValue.Add(newEmployeeViewModel);
+                    currentRow++;
                 }
             }
             else
