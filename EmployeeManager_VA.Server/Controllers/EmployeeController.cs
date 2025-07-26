@@ -13,21 +13,20 @@ namespace EmployeeManager_VA.Server.Controllers
         private readonly ILogger<EmployeeController> _logger = logger;
 
         [HttpGet(Name = "GetEmployee")]
-        public IEnumerable<EmployeeViewModel> Get(int? id, string? mode, string? filter)
+        public async Task<IEnumerable<EmployeeViewModel>> Get(int? id, string? mode, string? filter)
         {
             var employees = new List<TEmEmployee>();
-            var departmentsDictionary = Utilities.ApplicationUtilities.GetDepartments(employeeManagerDbContext);
             var returnValue = new List<EmployeeViewModel>();
 
             if (id != null && id != 0)
             {
-                employees = [.. employeeManagerDbContext.TEmEmployees.Include(dept => dept.Department).Where(e => e.Id == id)];
+                employees = await employeeManagerDbContext.TEmEmployees.Include(dept => dept.Department).Where(e => e.Id == id).ToListAsync();
             }
             else
             {
                 if (mode != null && mode.ToLower() == "list")
                 {
-                    employees = [.. employeeManagerDbContext.TEmEmployees.Include(dept => dept.Department)];
+                    employees = await employeeManagerDbContext.TEmEmployees.Include(dept => dept.Department).ToListAsync();
                 }
             }
 
@@ -71,7 +70,7 @@ namespace EmployeeManager_VA.Server.Controllers
         }
 
         [HttpPost(Name = "PostEmployee")]
-        public IActionResult Post([FromBody] EmployeeViewModel employeeViewModel)
+        public async Task<IActionResult> Post([FromBody] EmployeeViewModel employeeViewModel)
         {
             IActionResult actionResult = BadRequest("Unknown Error");
 
@@ -84,11 +83,11 @@ namespace EmployeeManager_VA.Server.Controllers
                     Utilities.Utilities.CopySharedPropertyValues<EmployeeViewModel, TEmEmployee>(employeeViewModel, newTEmEmployee);
 
                     employeeManagerDbContext.TEmEmployees.Add(newTEmEmployee);
-                    var addResult = employeeManagerDbContext.SaveChanges(true);
+                    var addResult = await employeeManagerDbContext.SaveChangesAsync(true);
 
                     if (addResult > 0)
                     {
-                        actionResult = Ok("Employee Added.");
+                        actionResult = Ok();
                     }
                     else
                     {
@@ -97,7 +96,7 @@ namespace EmployeeManager_VA.Server.Controllers
                 }
                 else
                 {
-                    var rowToUpdate = employeeManagerDbContext.TEmEmployees.Where(e => e.Id == employeeViewModel.Id).FirstOrDefault();
+                    var rowToUpdate = await employeeManagerDbContext.TEmEmployees.Where(e => e.Id == employeeViewModel.Id).FirstOrDefaultAsync();
 
                     if (rowToUpdate != null)
                     {
@@ -105,11 +104,11 @@ namespace EmployeeManager_VA.Server.Controllers
 
                         employeeManagerDbContext.TEmEmployees.Update(rowToUpdate);
 
-                        var updateResult = employeeManagerDbContext.SaveChanges();
+                        var updateResult = await employeeManagerDbContext.SaveChangesAsync();
 
                         if (updateResult > 0)
                         {
-                            actionResult = Ok("Employee Updated");
+                            actionResult = Ok();
                         }
                         else
                         {
@@ -126,7 +125,7 @@ namespace EmployeeManager_VA.Server.Controllers
         }
 
         [HttpDelete(Name = "DeleteEmployee")]
-        public IActionResult Delete(int? Id)
+        public async Task<IActionResult> Delete(int? Id)
         {
             IActionResult returnValue;
 
@@ -136,16 +135,16 @@ namespace EmployeeManager_VA.Server.Controllers
             }
             else
             {
-                var employeeRow = employeeManagerDbContext.TEmEmployees.Where(e => e.Id == Id).FirstOrDefault();
+                var employeeRow = await employeeManagerDbContext.TEmEmployees.Where(e => e.Id == Id).FirstOrDefaultAsync();
 
                 if (employeeRow != null)
                 {
                     employeeManagerDbContext.TEmEmployees.Remove(employeeRow);
-                    var deleteResult = employeeManagerDbContext.SaveChanges();
+                    var deleteResult = await employeeManagerDbContext.SaveChangesAsync();
 
                     if (deleteResult > 0)
                     {
-                        returnValue = Ok("Employee Deleted Successfully.");
+                        returnValue = Ok();
                     }
                     else
                     {

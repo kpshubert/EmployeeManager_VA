@@ -59,24 +59,26 @@ export class EmployeeService {
     return this.employee;
   }
 
-  postEmployeeData() {
+  async postEmployeeData() {
     const httpHeaders = new HttpHeaders({ 'content-type': 'application/json' });
 
-    this.http.post('/employee', this.employee, { headers: httpHeaders }).subscribe(response => {
-      console.log(response);
-      this.employees[this.employee.rowNum] = this.employee;
-    });
+    try {
+      const response = await firstValueFrom(this.http.post('/employee', this.employee, { headers: httpHeaders }));
 
-    //this.getEmployees(0, 'list', '');
+      console.log('Post successful: ', response);
+
+    } catch (error) {
+      console.error('Post failed: ', error);
+    }
   }
 
-  deleteEmployee(idIn: number) {
+  async deleteEmployee(idIn: number) {
     const parms = new HttpParams().set('id', idIn);
-    this.http.delete('/employee', { params: parms }).subscribe({
-      next: data => {
-        this.getEmployees(0, 'list', '');
-      },
-      error: error => { error.message }
-    });
+    try {
+      const response = await firstValueFrom(this.http.delete('/employee', { params: parms }));
+      console.log('Delete successful:', response);
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
   }  
 }

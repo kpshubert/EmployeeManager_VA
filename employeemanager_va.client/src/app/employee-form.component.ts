@@ -1,19 +1,20 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { Employee } from './models/employee';
 import { Department } from './models/department';
 import { EmployeeService } from './employee.service';
-
-//import { EmployeeTable } from './employee-table.component';
-//import { TableLazyLoadEvent } from 'primeng/table';
+import { EmployeeTable } from './employee-table.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'employee-form',
   templateUrl: './employee-form.component.html',
   styleUrl: './employee-form.component.css',
-  standalone: false,
-  providers: [EmployeeService]
+  providers: [EmployeeService],
+  imports: [EmployeeTable,
+    FormsModule,
+    EmployeeTable]
 })
 
 export class EmployeeFormComponent implements OnInit, AfterViewInit {
@@ -85,6 +86,8 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     )
   }
 
+  @ViewChild('childEmployeeTable') childEmployeeTable: EmployeeTable | undefined;
+
   title = 'EmployeeManager_VA.client';
   faCheckCircle = faCheckCircle;
   faAsterisk = faAsterisk;
@@ -94,10 +97,11 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   saveButtonIcon = faPlusCircle;
   submitButtonText = 'Add';
 
-  Submit() {
+  async Submit() {
     this.lazyLoadEmployeesTable('');
     this.employeeService.employee = this.employee;
-    this.employeeService.postEmployeeData();
+    await this.employeeService.postEmployeeData();
+    await this.childEmployeeTable?.refreshDataTable();
   }
 
   addButtonClick(event: any) {

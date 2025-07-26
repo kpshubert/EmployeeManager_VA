@@ -18,20 +18,20 @@
   <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
-      <employee-table (reloadAfterClientEditClick)="reloadAfterClientEditClick($event)"></employee-table>
+      <employee-table #childEmployeeTable (reloadAfterClientEditClick)="reloadAfterClientEditClick($event)"></employee-table>
       <fieldset class="border border-primary rounded rounded-3 p-3 mb-3">
         <legend>Employee Information</legend>
         <div class="row">
           <div class="col-md-6">
             <div class="form-floating mb-1">
               <input id="txtEmployeeFirstName" class="form-control" required type="text" [(ngModel)]="this.employee.firstName" name="firstName" />
-              <label for="txtEmployeeFirstName" class="form-label">First Name&nbsp;<fa-icon class="text-danger" [icon]="faAsterisk"></fa-icon></label>
+              <label for="txtEmployeeFirstName" class="form-label">First Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-floating mb-1">
               <input id="txtEmployeeLastName" class="form-control" required type="text" [(ngModel)]="this.employee.lastName" name="lastName" />
-              <label for="txtEmployeeLastName" class="form-label">Last Name&nbsp;<fa-icon class="text-danger" [icon]="faAsterisk"></fa-icon></label>
+              <label for="txtEmployeeLastName" class="form-label">Last Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@
       </fieldset>
       <div class="row mb-3">
         <div class="col-md-12">
-          <button class="btn btn-success" type="submit"><fa-icon [(icon)]="saveButtonIcon"></fa-icon>&nbsp;{{ this.submitButtonText }}</button>
+          <button class="btn btn-success" type="submit"><span class="fas fa-save"></span>&nbsp;{{ this.submitButtonText }}</button>
         </div>
       </div>
     </div>
