@@ -45,9 +45,11 @@ export class EmployeeTable implements OnInit {
   faWindowClose = faWindowClose;
   faUser = faUser;
 
-  editButtonClick(event: any, id: number) {
+  editButtonClick(event: any, idIn: number) {
     console.log('Running editButtonClick');
-    this.reloadAfterClientEditClick.emit(id);
+    this.reloadAfterClientEditClick.emit(idIn);
   }
-  deleteButtonClick(event: any, id: number) { }
+  deleteButtonClick(event: any, idIn: number) {
+    this.employeeService.deleteEmployee(idIn);
+  }
 }

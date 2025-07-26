@@ -96,10 +96,12 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   Submit() {
     this.lazyLoadEmployeesTable('');
+    this.employeeService.employee = this.employee;
     this.employeeService.postEmployeeData();
   }
 
   addButtonClick(event: any) {
+    this.employeeService.employee = this.employee;
     this.employeeService.addEmployee();
   }
 
