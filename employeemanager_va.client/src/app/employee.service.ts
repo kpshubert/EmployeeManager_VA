@@ -62,23 +62,30 @@ export class EmployeeService {
   async postEmployeeData() {
     const httpHeaders = new HttpHeaders({ 'content-type': 'application/json' });
 
+    const processType = this.employee.formMode === 'edit' ? 'Employee update' : 'Employee add';
+
     try {
       const response = await firstValueFrom(this.http.post('/employee', this.employee, { headers: httpHeaders }));
-
       console.log('Post successful: ', response);
+
+      return processType + ' succeeded';
 
     } catch (error) {
       console.error('Post failed: ', error);
+      return processType + ' failed.';
     }
   }
 
   async deleteEmployee(idIn: number) {
+    const processType = 'Employee delete';
     const parms = new HttpParams().set('id', idIn);
     try {
       const response = await firstValueFrom(this.http.delete('/employee', { params: parms }));
       console.log('Delete successful:', response);
+      return processType + ' succeeded';
     } catch (error) {
       console.error('Delete failed:', error);
+      return processType + 'failed';
     }
   }  
 }

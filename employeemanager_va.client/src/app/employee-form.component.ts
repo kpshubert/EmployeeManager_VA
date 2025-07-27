@@ -1,8 +1,9 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { Employee } from './models/employee';
 import { Department } from './models/department';
+import { StatusMessageParameters } from './models/StatusMessageParameters';
 import { EmployeeService } from './employee.service';
 import { EmployeeTable } from './employee-table.component';
 import { FormsModule } from '@angular/forms';
@@ -96,11 +97,14 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   faSave = faSave;
   saveButtonIcon = faPlusCircle;
   submitButtonText = 'Add';
+  statusMessage = '';
+  processResultMessage = '';
 
   async Submit() {
     this.lazyLoadEmployeesTable('');
     this.employeeService.employee = this.employee;
-    await this.employeeService.postEmployeeData();
+    this.processResultMessage = await this.employeeService.postEmployeeData();
+    this.showStatusMessage({MessageText: this.processResultMessage, TimeoutIn: 5});
     await this.childEmployeeTable?.refreshDataTable();
   }
 
@@ -126,5 +130,17 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   async lazyLoadEmployeesTable(event: any) {
      this.employee = await this.employeeService.getEmployee(0);
+  }
+
+  showStatusMessage(statusMessageParameters: StatusMessageParameters) {
+    var timeoutInMS: number = 3000;
+
+    if (typeof statusMessageParameters.TimeoutIn === "number") { 
+      timeoutInMS = statusMessageParameters.TimeoutIn * 1000;
+    }
+    this.statusMessage = statusMessageParameters.MessageText;
+      setTimeout(() => {
+        this.statusMessage = '';
+      }, timeoutInMS);
   }
 }
