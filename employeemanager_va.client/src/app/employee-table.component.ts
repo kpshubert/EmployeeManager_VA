@@ -5,6 +5,7 @@ import { faWindowClose, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Table, TableModule } from 'primeng/table';
 import { EmployeeService } from './employee.service';
 import { Employee } from './models/employee';
+import { StatusMessageParameters } from './models/StatusMessageParameters';
 
 @Component({
   selector: 'employee-table',
@@ -31,6 +32,8 @@ export class EmployeeTable implements OnInit {
 
   @Output() reloadAfterClientEditClick: EventEmitter<number> = new EventEmitter();
 
+  @Output() showStatusMessage: EventEmitter<StatusMessageParameters> = new EventEmitter();
+
   applyFilterGlobal($event: any, stringVal: any) {
     this.dtEmployees?.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
   }
@@ -48,7 +51,9 @@ export class EmployeeTable implements OnInit {
     this.reloadAfterClientEditClick.emit(idIn);
   }
   async deleteButtonClick(event: any, idIn: number) {
-    await this.employeeService.deleteEmployee(idIn);
+    const statusMessage = await this.employeeService.deleteEmployee(idIn);
+    const messageParameters: StatusMessageParameters = { MessageText: statusMessage, TimeoutIn: 5 };
+    this.showStatusMessage.emit(messageParameters);
     this.refreshDataTable();
   }
 
