@@ -1,5 +1,5 @@
 import { provideHttpClient, withInterceptorsFromDi, withFetch } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms'
 import { AppRoutingModule } from './app-routing.module';
@@ -17,7 +17,6 @@ import Lara from '@primeuix/themes/aura';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome'
 import { EmployeeService } from './employee.service';
 import * as $ from "jquery";
-//import { EmployeeTable } from './employee-table.component';
 
 @NgModule({
   declarations: [],
