@@ -24,7 +24,7 @@
   </div>
   <div class="col-md-1"></div>
 </div>
-<form (ngSubmit)="Submit()">
+<form [formGroup]="employeeForm" (ngSubmit)="Submit()">
   <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
@@ -34,35 +34,35 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeeFirstName" class="form-control" required type="text" [(ngModel)]="this.employee.firstName" name="firstName" />
-              <label for="txtEmployeeFirstName" class="form-label">First Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
+              <input class="form-control" type="text" formControlName="firstName" />
+              <label for="firstName" class="form-label">First Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeeLastName" class="form-control" required type="text" [(ngModel)]="this.employee.lastName" name="lastName" />
-              <label for="txtEmployeeLastName" class="form-label">Last Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
+              <input class="form-control" type="text" formControlName="lastName" />
+              <label for="lastName" class="form-label">Last Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
             </div>
           </div>
         </div>
         <div class="row mb-3">
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeePhone" class="form-control" type="tel" [(ngModel)]="this.employee.phone" name="phone" />
-              <label for="txtEmployeePhone" class="form-label">Phone</label>
+              <input class="form-control" type="tel"  formControlName="phone" />
+              <label for="phone" class="form-label">Phone</label>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-floating mb-1">
-              <input id="txtEmployeeEmail" class="form-control" type="email" [(ngModel)]="this.employee.email" name="email" />
-              <label for="txtEmployeeEmail" class="form-label">Email</label>
+              <input class="form-control" type="email" formControlName="email" />
+              <label for="email" class="form-label">Email</label>
             </div>
           </div>
         </div>
         <div class="row mb-3">
           <div class="col-md-12">
             <div class="form-floating mb-1">
-              <select id="selEmployeeDepartment" required (change)="departmentSelectChange($event)" class="form-select" [(ngModel)]="this.employee.departmentIdString" name="departmentIdString">
+              <select (change)="departmentSelectChange($event)" class="form-select" formControlName="departmentIdString">
                 <option value="">--please select--</option>
                 @for(option of departments; track option.id) {
                 <option value="{{ option.idString }}">
@@ -70,7 +70,7 @@
                 </option>
                 }
               </select>
-              <label for="selEmployeeDepartment">Department</label>
+              <label for="departmentIdString">Department</label>
             </div>
           </div>
         </div>
