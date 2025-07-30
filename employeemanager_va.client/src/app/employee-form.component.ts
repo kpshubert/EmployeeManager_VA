@@ -6,7 +6,7 @@ import { Department } from './models/department';
 import { StatusMessageParameters } from './models/StatusMessageParameters';
 import { EmployeeService } from './employee.service';
 import { EmployeeTable } from './employee-table.component';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'employee-form',
@@ -14,8 +14,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './employee-form.component.css',
   providers: [EmployeeService],
   imports: [EmployeeTable,
-    FormsModule,
-    EmployeeTable]
+    ReactiveFormsModule
+  ]
 })
 
 export class EmployeeFormComponent implements OnInit, AfterViewInit {
@@ -50,16 +50,34 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     name: ''
   };
 
+  employeeForm: FormGroup;
+
   constructor(private http: HttpClient, private employeeService: EmployeeService) {
+    this.employeeForm = new FormGroup({
+      firstName: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      phone: new FormControl('', [Validators.required]),
+      departmentIdString: new FormControl('', [Validators.required])
+    });
   }
 
   async reloadAfterClientEditClick(idIn: number) {
     if (idIn !== undefined) {
       const returnValue = await this.employeeService.getEmployee(idIn);
       this.employee = returnValue;
+      this.changeFormValues();
       this.saveButtonIcon = faSave;
       this.submitButtonText = 'Update';
     }
+  }
+
+  changeFormValues() {
+    this.employeeForm.get('firstName')?.setValue(this.employee.firstName);
+    this.employeeForm.get('lastName')?.setValue(this.employee.lastName);
+    this.employeeForm.get('email')?.setValue(this.employee.email);
+    this.employeeForm.get('phone')?.setValue(this.employee.phone);
+    this.employeeForm.get('departmentIdString')?.setValue(this.employee.departmentIdString);
   }
 
   async ngOnInit() {
@@ -101,16 +119,21 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   processResultMessage = '';
 
   async Submit() {
-    this.lazyLoadEmployeesTable('');
-    this.employeeService.employee = this.employee;
-    this.processResultMessage = await this.employeeService.postEmployeeData();
-    this.showStatusMessage({MessageText: this.processResultMessage, TimeoutIn: 5});
-    await this.childEmployeeTable?.refreshDataTable();
+    if (this.employeeForm.valid) {
+      this.lazyLoadEmployeesTable('');
+      this.employeeService.employee = this.employee;
+      this.processResultMessage = await this.employeeService.postEmployeeData();
+      this.showStatusMessage({ MessageText: this.processResultMessage, TimeoutIn: 5 });
+      await this.childEmployeeTable?.refreshDataTable();
+    } else {
+      this.showStatusMessage({ MessageText: 'Form has invalid data.', TimeoutIn: 5});
+    }
   }
 
   addButtonClick(event: any) {
     this.employeeService.employee = this.employee;
     this.employeeService.addEmployee();
+    this.changeFormValues();
   }
 
   departmentSelectChange(event: Event) {
@@ -129,18 +152,18 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   }
 
   async lazyLoadEmployeesTable(event: any) {
-     this.employee = await this.employeeService.getEmployee(0);
+    this.employee = await this.employeeService.getEmployee(0);
   }
 
   showStatusMessage(statusMessageParameters: StatusMessageParameters) {
     var timeoutInMS: number = 3000;
 
-    if (typeof statusMessageParameters.TimeoutIn === "number") { 
+    if (typeof statusMessageParameters.TimeoutIn === "number") {
       timeoutInMS = statusMessageParameters.TimeoutIn * 1000;
     }
     this.statusMessage = statusMessageParameters.MessageText;
-      setTimeout(() => {
-        this.statusMessage = '';
-      }, timeoutInMS);
+    setTimeout(() => {
+      this.statusMessage = '';
+    }, timeoutInMS);
   }
 }
