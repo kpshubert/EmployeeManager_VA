@@ -7,6 +7,7 @@ import { StatusMessageParameters } from './models/StatusMessageParameters';
 import { EmployeeService } from './employee.service';
 import { EmployeeTable } from './employee-table.component';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ObjToKeysPipe } from './Pipes/objToKeys';
 
 @Component({
   selector: 'employee-form',
@@ -54,10 +55,10 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   constructor(private http: HttpClient, private employeeService: EmployeeService) {
     this.employeeForm = new FormGroup({
-      firstName: new FormControl('', [Validators.required]),
-      lastName: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      phone: new FormControl('', [Validators.required]),
+      firstName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+      lastName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+      email: new FormControl('', [Validators.email, Validators.maxLength(100)]),
+      phone: new FormControl('', [Validators.maxLength(12)]),
       departmentIdString: new FormControl('', [Validators.required])
     });
   }
@@ -117,6 +118,11 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   submitButtonText = 'Add';
   statusMessage = '';
   processResultMessage = '';
+  firstNameErrorMessage: string = '';
+  lastNameErrorMessage: string = '';
+  phoneErrorMessage: string = '';
+  emailErrorMessage: string = '';
+  departmentErrorMessage: string = '';
 
   async Submit() {
     if (this.employeeForm.valid) {
@@ -126,7 +132,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
       this.showStatusMessage({ MessageText: this.processResultMessage, TimeoutIn: 5 });
       await this.childEmployeeTable?.refreshDataTable();
     } else {
-      this.showStatusMessage({ MessageText: 'Form has invalid data.', TimeoutIn: 5});
+      this.showStatusMessage({ MessageText: 'Form has invalid data.', TimeoutIn: 5 });
     }
   }
 
@@ -142,6 +148,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     const selectedValueNumber = parseInt(selectedValue);
 
     this.employee.departmentId = selectedValueNumber;
+    this.setInvalidMessages(event);
   }
 
   setUpJqueryTestButton() {
@@ -165,5 +172,43 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.statusMessage = '';
     }, timeoutInMS);
+  }
+
+  getInvalidMessage(controlName: string, friendlyName: string) {
+    let returnValue: string = '';
+    let formControl = this.employeeForm.controls[controlName];
+    let pipe = new ObjToKeysPipe();
+
+    if (formControl.errors !== null) {
+      for (var key of pipe.transform(formControl.errors)) {
+        let keyValue = formControl.errors[key];
+        if (key === 'required') {
+          returnValue = 'Please enter a ' + friendlyName + '.';
+        } else if (key === 'maxlength') {
+          let maxAllowed = keyValue.requiredLength;
+          let numberEntered = keyValue.actualLength;
+          returnValue = 'Allowed length for ' + friendlyName + ' is: ' + maxAllowed + " entered: " + numberEntered;
+        } else if (key = 'email')
+        {
+          returnValue = 'Please enter a valid email address';
+        }
+      }
+    } else {
+      returnValue = '';
+    }
+
+    return returnValue;
+  }
+
+  setInvalidMessages(event: any) {
+    this.firstNameErrorMessage = this.getInvalidMessage('firstName', 'first name');
+    this.employee.firstName = this.employeeForm.controls['firstName'].value;
+    this.lastNameErrorMessage = this.getInvalidMessage('lastName', 'last name');
+    this.employee.lastName = this.employeeForm.controls['lastName'].value;
+    this.phoneErrorMessage = this.getInvalidMessage('phone', 'phone number');
+    this.employee.phone = this.employeeForm.controls['phone'].value;
+    this.emailErrorMessage = this.getInvalidMessage('email', 'email address');
+    this.employee.email = this.employeeForm.controls['email'].value;
+    this.departmentErrorMessage = this.getInvalidMessage('departmentIdString', 'department');
   }
 }
