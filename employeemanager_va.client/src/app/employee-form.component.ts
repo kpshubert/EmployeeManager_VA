@@ -6,8 +6,10 @@ import { Department } from './models/department';
 import { StatusMessageParameters } from './models/StatusMessageParameters';
 import { EmployeeService } from './employee.service';
 import { EmployeeTable } from './employee-table.component';
-import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ValidatedTextboxComponent } from './validated-textbox/validated-textbox.component';
+import { ReactiveFormsModule, FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { ObjToKeysPipe } from './Pipes/objToKeys';
+import { valHooks } from 'jquery';
 
 @Component({
   selector: 'employee-form',
@@ -15,7 +17,8 @@ import { ObjToKeysPipe } from './Pipes/objToKeys';
   styleUrl: './employee-form.component.css',
   providers: [EmployeeService],
   imports: [EmployeeTable,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ValidatedTextboxComponent
   ]
 })
 
@@ -53,13 +56,13 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   employeeForm: FormGroup;
 
-  constructor(private http: HttpClient, private employeeService: EmployeeService) {
-    this.employeeForm = new FormGroup({
-      firstName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      lastName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      email: new FormControl('', [Validators.email, Validators.maxLength(100)]),
-      phone: new FormControl('', [Validators.maxLength(12)]),
-      departmentIdString: new FormControl('', [Validators.required])
+  constructor(private http: HttpClient, private employeeService: EmployeeService, private fb: FormBuilder) {
+    this.employeeForm = this.fb.group({
+      firstName: [''],
+      lastName: ['', [Validators.required, Validators.maxLength(100)]],
+      email: ['', [Validators.email, Validators.maxLength(100)]],
+      phone: ['', [Validators.maxLength(12)]],
+      departmentIdString: ['', [Validators.required]]
     });
   }
 
@@ -74,6 +77,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   }
 
   changeFormValues() {
+    this.employeeFirstNameControl?.externalValueChange(this.employee.firstName);
     this.employeeForm.get('firstName')?.setValue(this.employee.firstName);
     this.employeeForm.get('lastName')?.setValue(this.employee.lastName);
     this.employeeForm.get('email')?.setValue(this.employee.email);
@@ -107,6 +111,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   }
 
   @ViewChild('childEmployeeTable') childEmployeeTable: EmployeeTable | undefined;
+  @ViewChild('employeeFirstNameControl') employeeFirstNameControl: ValidatedTextboxComponent | undefined;
 
   title = 'EmployeeManager_VA.client';
   faCheckCircle = faCheckCircle;
@@ -201,8 +206,8 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   }
 
   setInvalidMessages(event: any) {
-    this.firstNameErrorMessage = this.getInvalidMessage('firstName', 'first name');
-    this.employee.firstName = this.employeeForm.controls['firstName'].value;
+    //this.firstNameErrorMessage = this.getInvalidMessage('firstName', 'first name');
+    //this.employee.firstName = this.employeeForm.controls['firstName'].value;
     this.lastNameErrorMessage = this.getInvalidMessage('lastName', 'last name');
     this.employee.lastName = this.employeeForm.controls['lastName'].value;
     this.phoneErrorMessage = this.getInvalidMessage('phone', 'phone number');
@@ -211,4 +216,16 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     this.employee.email = this.employeeForm.controls['email'].value;
     this.departmentErrorMessage = this.getInvalidMessage('departmentIdString', 'department');
   }
+
+  getFormControl<FormControl>(formControlName: string) {
+    return this.employeeForm.controls[formControlName] as FormControl;
+  }
+
+  setEmployeeFieldValue<T>(fieldNameIn: string, fieldValue: string) {
+    let fieldName: string = fieldNameIn || '';
+    this.employee[fieldName] = fieldValue;
+  }
+
+  onFirstNameBlur(value: any) { this.employee.firstName = value; }
+  onFirstNameChange(value: any) { this.employee.firstName = value; }
 }

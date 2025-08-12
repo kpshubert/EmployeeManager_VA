@@ -1,0 +1,21 @@
+<div class="form-group">
+  <div class="form-floating mb-1">
+    <input [id]="label.toLowerCase().replace(' ', '-')"
+           [type]="type"
+           [placeholder]="placeholder"
+           [formControl]="control"
+           (input)="onInput($event)"
+           (blur)="onTouched($event)"
+           [maxLength]="100"
+           class="form-control"
+           [class.is-invalid]="isInvalid" />
+    <label [for]="label.toLowerCase().replace(' ', '-')">
+      {{ label }}
+    </label>
+  </div>
+  @if (isInvalid) {
+  <div class="invalid-feedback">
+    {{ errorMessage }}
+  </div>
+  }
+</div>

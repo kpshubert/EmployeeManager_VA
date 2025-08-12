@@ -46,23 +46,23 @@ export class EmployeeService {
   }
 
   addEmployee() : Employee {
-    this.employee.rowNum = 0;
-    this.employee.id = 0;
-    this.employee.firstName = '';
-    this.employee.lastName = '';
-    this.employee.phone = '';
-    this.employee.email = '';
-    this.employee.departmentId = 0;
-    this.employee.departmentIdString = '0';
-    this.employee.departmentName = '';
-    this.employee.formMode = 'add';
+    this.employee['rowNum'] = 0;
+    this.employee['id'] = 0;
+    this.employee['firstName'] = '';
+    this.employee['lastName'] = '';
+    this.employee['phone'] = '';
+    this.employee['email'] = '';
+    this.employee['departmentId'] = 0;
+    this.employee['departmentIdString'] = '0';
+    this.employee['departmentName'] = '';
+    this.employee['formMode'] = 'add';
     return this.employee;
   }
 
   async postEmployeeData() {
     const httpHeaders = new HttpHeaders({ 'content-type': 'application/json' });
 
-    const processType = this.employee.formMode === 'edit' ? 'Employee update' : 'Employee add';
+    const processType = this.employee['formMode'] === 'edit' ? 'Employee update' : 'Employee add';
 
     try {
       const response = await firstValueFrom(this.http.post('/employee', this.employee, { headers: httpHeaders }));

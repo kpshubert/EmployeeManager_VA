@@ -19,7 +19,6 @@ import { EmployeeService } from './employee.service';
 import * as $ from "jquery";
 
 @NgModule({
-  declarations: [],
   bootstrap: [EmployeeFormComponent],
   imports: [BrowserModule,
     AppRoutingModule,
@@ -46,5 +45,5 @@ import * as $ from "jquery";
   ]
 })
 export class AppModule {
-//  faCoffee = faCoffee;
+  //  faCoffee = faCoffee;
 }

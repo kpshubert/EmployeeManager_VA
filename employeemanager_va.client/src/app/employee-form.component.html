@@ -32,25 +32,16 @@
       <fieldset class="border border-primary rounded rounded-3 p-3 mb-3">
         <legend>Employee Information</legend>
         <div class="row mb-3">
-          <div class="col-md-6">
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <div class="form-floating mb-1">
-                  <input class="form-control" type="text" (input)="setInvalidMessages(
-                     $event)" formControlName="firstName" />
-                  <label for="firstName" class="form-label">First Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
-                </div>
-              </div>
-            </div>
-            @if (this.firstNameErrorMessage.length > 0) {
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <span class="text-light bg-danger rounded rounded-2 p-1">
-                  <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.firstNameErrorMessage }}
-                </span>
-              </div>
-            </div>
-            }
+          <div id="dvFirstName" class="col-md-6">
+            <validated-textbox-component #employeeFirstNameControl
+                                         label="First Name"
+                                         type="text"
+                                         placeholder="First Name"
+                                         [maxLength]="100"
+                                         [required]="true"
+                                         (valueChange)="onFirstNameChange($event)"
+                                         (blur)="onFirstNameBlur($event)">
+            </validated-textbox-component>
           </div>
           <div class="col-md-6">
             <div class="row mb-2">
