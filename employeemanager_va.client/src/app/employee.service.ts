@@ -19,7 +19,7 @@ export class EmployeeService {
     phone: '',
     email: '',
     departmentId: 0,
-    departmentIdString: '0',
+    departmentIdString: '',
     departmentName: '',
     formMode: 'add'
   };
@@ -53,7 +53,7 @@ export class EmployeeService {
     this.employee['phone'] = '';
     this.employee['email'] = '';
     this.employee['departmentId'] = 0;
-    this.employee['departmentIdString'] = '0';
+    this.employee['departmentIdString'] = '';
     this.employee['departmentName'] = '';
     this.employee['formMode'] = 'add';
     return this.employee;

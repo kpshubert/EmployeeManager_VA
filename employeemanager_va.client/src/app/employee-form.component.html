@@ -37,80 +37,55 @@
                                          label="First Name"
                                          type="text"
                                          placeholder="First Name"
-                                         [maxLength]="100"
+                                         [maxLength]=100
                                          [required]="true"
-                                         (valueChange)="onFirstNameChange($event)"
-                                         (blur)="onFirstNameBlur($event)">
+                                         (valueChange)="onSubControlChange($event, 'firstName')"
+                                         (blur)="onSubControlBlur($event, 'firstName')">
             </validated-textbox-component>
           </div>
           <div class="col-md-6">
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <div class="form-floating mb-1">
-                  <input class="form-control" type="text" (input)="setInvalidMessages(
-                     $event)" formControlName="lastName" />
-                  <label for="lastName" class="form-label">Last Name&nbsp;<span class="text-danger fas fa-asterisk"></span></label>
-                </div>
-              </div>
-            </div>
-            @if (this.lastNameErrorMessage.length > 0) {
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <span class="text-light bg-danger rounded rounded-2 p-1 mb-3 mt-3">
-                  <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.lastNameErrorMessage }}
-                </span>
-              </div>
-            </div>
-            }
+            <validated-textbox-component #employeeLastNameControl
+                                         label="Last Name"
+                                         type="text"
+                                         placeholder="Last Name"
+                                         [maxLength]=100
+                                         [required]="true"
+                                         (valueChange)="onSubControlChange($event, 'lastName')"
+                                         (blur)="onSubControlBlur($event, 'lastName')">
+            </validated-textbox-component>
           </div>
         </div>
         <div class="row mb-3">
           <div class="col-md-6">
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <div class="form-floating mb-1">
-                  <input class="form-control" type="tel" (input)="setInvalidMessages(
-                     $event)" formControlName="phone" />
-                  <label for="phone" class="form-label">Phone</label>
-                </div>
-              </div>
-            </div>
-            @if (this.phoneErrorMessage.length > 0) {
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <span class="text-light bg-danger rounded rounded-2 p-1 mb-3 mt-3">
-                  <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.phoneErrorMessage }}
-                </span>
-              </div>
-            </div>
-            }
+            <validated-textbox-component #employeePhoneControl
+                                         label="Phone"
+                                         type="tel"
+                                         placeholder="Phone"
+                                         [maxLength]=12
+                                         [minLength]=7
+                                         [required]="false"
+                                         (valueChange)="onSubControlChange($event, 'phone')"
+                                         (blur)="onSubControlBlur($event, 'phone')">
+            </validated-textbox-component>
           </div>
           <div class="col-md-6">
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <div class="form-floating mb-1">
-                  <input class="form-control" type="email" (input)="setInvalidMessages(
-                     $event)" formControlName="email" />
-                  <label for="email" class="form-label">Email</label>
-                </div>
-              </div>
-            </div>
-            @if (this.emailErrorMessage.length > 0) {
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <span class="text-light bg-danger rounded rounded-2 p-1 mb-3 mt-3">
-                  <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.emailErrorMessage }}
-                </span>
-              </div>
-            </div>
-            }
+            <validated-textbox-component #employeeEmailControl
+                                         label="Email"
+                                         type="email"
+                                         placeholder="Email"
+                                         [maxLength]=100
+                                         [required]="false"
+                                         [email]=true
+                                         (valueChange)="onSubControlChange($event, 'email')"
+                                         (blur)="onSubControlBlur($event, 'email')">
+            </validated-textbox-component>
           </div>
         </div>
         <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-2">
               <div class="form-floating mb-1">
-                <select (change)="departmentSelectChange($event)" class="form-select" formControlName="departmentIdString">
+                <select (change)="departmentSelectChange($event)" [class.is-invalid]="this.departmentIdIsInvalid" class="form-select" formControlName="departmentIdString">
                   <option value="">--please select--</option>
                   @for(option of departments; track option.id) {
                   <option value="{{ option.idString }}">

@@ -34,7 +34,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     phone: '',
     email: '',
     departmentId: 0,
-    departmentIdString: '0',
+    departmentIdString: '',
     departmentName: '',
     formMode: 'add'
   };
@@ -58,10 +58,6 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   constructor(private http: HttpClient, private employeeService: EmployeeService, private fb: FormBuilder) {
     this.employeeForm = this.fb.group({
-      firstName: [''],
-      lastName: ['', [Validators.required, Validators.maxLength(100)]],
-      email: ['', [Validators.email, Validators.maxLength(100)]],
-      phone: ['', [Validators.maxLength(12)]],
       departmentIdString: ['', [Validators.required]]
     });
   }
@@ -79,15 +75,21 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   changeFormValues() {
     this.employeeFirstNameControl?.externalValueChange(this.employee.firstName);
     this.employeeForm.get('firstName')?.setValue(this.employee.firstName);
+    this.employeeLastNameControl?.externalValueChange(this.employee.lastName);
     this.employeeForm.get('lastName')?.setValue(this.employee.lastName);
+    this.employeeEmailControl?.externalValueChange(this.employee.email);
     this.employeeForm.get('email')?.setValue(this.employee.email);
+    this.employeePhoneControl?.externalValueChange(this.employee.phone);
     this.employeeForm.get('phone')?.setValue(this.employee.phone);
     this.employeeForm.get('departmentIdString')?.setValue(this.employee.departmentIdString);
+    this.employeeForm.get('departmentIdString')?.updateValueAndValidity();
+    this.setInvalidMessages();
   }
 
   async ngOnInit() {
     this.employee = await this.employeeService.getEmployee(0);
     this.getDepartments(0, 'list', '');
+    this.setInvalidMessages();
   }
 
   ngAfterViewInit() {
@@ -112,6 +114,9 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   @ViewChild('childEmployeeTable') childEmployeeTable: EmployeeTable | undefined;
   @ViewChild('employeeFirstNameControl') employeeFirstNameControl: ValidatedTextboxComponent | undefined;
+  @ViewChild('employeeLastNameControl') employeeLastNameControl: ValidatedTextboxComponent | undefined;
+  @ViewChild('employeePhoneControl') employeePhoneControl: ValidatedTextboxComponent | undefined;
+  @ViewChild('employeeEmailControl') employeeEmailControl: ValidatedTextboxComponent | undefined;
 
   title = 'EmployeeManager_VA.client';
   faCheckCircle = faCheckCircle;
@@ -123,14 +128,11 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   submitButtonText = 'Add';
   statusMessage = '';
   processResultMessage = '';
-  firstNameErrorMessage: string = '';
-  lastNameErrorMessage: string = '';
-  phoneErrorMessage: string = '';
-  emailErrorMessage: string = '';
   departmentErrorMessage: string = '';
 
   async Submit() {
-    if (this.employeeForm.valid) {
+    this.setInvalidMessages();
+    if (this.employeeForm.valid && this.customControlsAreValid()) {
       this.lazyLoadEmployeesTable('');
       this.employeeService.employee = this.employee;
       this.processResultMessage = await this.employeeService.postEmployeeData();
@@ -153,7 +155,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     const selectedValueNumber = parseInt(selectedValue);
 
     this.employee.departmentId = selectedValueNumber;
-    this.setInvalidMessages(event);
+    this.setInvalidMessages();
   }
 
   setUpJqueryTestButton() {
@@ -205,15 +207,11 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     return returnValue;
   }
 
-  setInvalidMessages(event: any) {
-    //this.firstNameErrorMessage = this.getInvalidMessage('firstName', 'first name');
-    //this.employee.firstName = this.employeeForm.controls['firstName'].value;
-    this.lastNameErrorMessage = this.getInvalidMessage('lastName', 'last name');
-    this.employee.lastName = this.employeeForm.controls['lastName'].value;
-    this.phoneErrorMessage = this.getInvalidMessage('phone', 'phone number');
-    this.employee.phone = this.employeeForm.controls['phone'].value;
-    this.emailErrorMessage = this.getInvalidMessage('email', 'email address');
-    this.employee.email = this.employeeForm.controls['email'].value;
+  setInvalidMessages() {
+    let firstNameErrorMessage = this.employeeFirstNameControl?.errorMessage;
+    let lastNameErrorMessage = this.employeeLastNameControl?.errorMessage;
+    let emailErrorMessage = this.employeeEmailControl?.errorMessage;
+    let phoneErrorMessage = this.employeePhoneControl?.errorMessage;
     this.departmentErrorMessage = this.getInvalidMessage('departmentIdString', 'department');
   }
 
@@ -226,6 +224,30 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     this.employee[fieldName] = fieldValue;
   }
 
-  onFirstNameBlur(value: any) { this.employee.firstName = value; }
-  onFirstNameChange(value: any) { this.employee.firstName = value; }
+  onSubControlBlur(value: any, updateField: string) {
+    this.employee[updateField] = value;
+  }
+
+  onSubControlChange(value: any, updateField: string) {
+    this.employee[updateField] = value;
+  }
+
+  customControlsAreValid() {
+    let returnValue: boolean = true;
+
+    let firstNameIsValid = this.employeeFirstNameControl !== null ? !this.employeeFirstNameControl?.isInvalid : true;
+    returnValue = returnValue && firstNameIsValid;
+    let lastNameIsValid = this.employeeLastNameControl !== null ? !this.employeeLastNameControl?.isInvalid : true;
+    returnValue = returnValue && lastNameIsValid;
+    let emailIsValid = this.employeeEmailControl !== null ? !this.employeeEmailControl?.isInvalid : true;
+    returnValue = returnValue && emailIsValid;
+    let phoneIsValid = this.employeePhoneControl !== null ? !this.employeePhoneControl?.isInvalid : true;
+    returnValue = returnValue && phoneIsValid;
+
+    return returnValue;
+  }
+
+  get departmentIdIsInvalid(): boolean {
+    return this.employeeForm.controls['departmentIdString'].invalid; // && (this.control.touched || this.control.dirty);
+  }
 }
