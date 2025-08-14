@@ -1,21 +1,35 @@
 <div class="form-group">
-  <div class="form-floating mb-1">
-    <input [id]="label.toLowerCase().replace(' ', '-')"
-           [type]="type"
-           [placeholder]="placeholder"
-           [formControl]="control"
-           (input)="onInput($event)"
-           (blur)="onTouched($event)"
-           [maxLength]="100"
-           class="form-control"
-           [class.is-invalid]="isInvalid" />
-    <label [for]="label.toLowerCase().replace(' ', '-')">
-      {{ label }}
-    </label>
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="form-floating mb-1">
+        <input [id]="label.toLowerCase().replace(' ', '-')"
+               [type]="type"
+               [placeholder]="placeholder"
+               [formControl]="control"
+               (input)="onInput($event)"
+               (blur)="onTouched($event)"
+               [maxLength]="100"
+               class="form-control"
+               [class.is-invalid]="isInvalid" />
+        <label [for]="label.toLowerCase().replace(' ', '-')">
+          {{ label }}
+        </label>
+      </div>
+    </div>
   </div>
   @if (isInvalid) {
   <div class="invalid-feedback">
     {{ errorMessage }}
+  </div>
+  }
+
+  @if (this.errorMessageKPS.length > 0) {
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <span class="text-light bg-danger rounded rounded-2 p-1 mb-3 mt-3">
+        <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.errorMessageKPS }}
+      </span>
+    </div>
   </div>
   }
 </div>

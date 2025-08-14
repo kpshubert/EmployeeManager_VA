@@ -7,3 +7,5 @@
 /.vs
 /employeemanager_va.client/.vscode
 /employeemanager_va.client/obj
+/employeemanager_va.client/node_modules.zip
+*.zip

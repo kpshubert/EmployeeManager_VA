@@ -14,12 +14,15 @@ export class ValidatedTextboxComponent implements OnInit {
   @Input() required: boolean = false;
   @Input() min: number | null = null;
   @Input() max: number | null = null;
-  @Input() maxLength: number | null = null; 
+  @Input() maxLength: number | null = null;
+  @Input() minLength: number | null = null;
+  @Input() email: boolean = false;
 
   @Output() valueChange = new EventEmitter<string>();
   @Output() blur = new EventEmitter<any>();
 
   control: FormControl = new FormControl('', []);
+  errorMessageKPS: string = '';
 
   ngOnInit() {
     const validators = [];
@@ -34,6 +37,12 @@ export class ValidatedTextboxComponent implements OnInit {
     }
     if (this.maxLength !== null) {
       validators.push(Validators.maxLength(this.maxLength));
+    }
+    if (this.minLength !== null) {
+      validators.push(Validators.minLength(this.minLength));
+    }
+    if (this.email) {
+      validators.push(Validators.email);
     }
     this.control.setValidators(validators);
     this.control.updateValueAndValidity();
@@ -60,17 +69,31 @@ export class ValidatedTextboxComponent implements OnInit {
   }
 
   get isInvalid(): boolean {
-    return this.control.invalid && (this.control.touched || this.control.dirty);
+    return this.control.invalid; // && (this.control.touched || this.control.dirty);
   }
 
   get errorMessage(): string | null {
-    if (!this.isInvalid) return null;
-    const errors = this.control.errors;
-    if (errors?.['required']) return 'This field is required.';
-    if (errors?.['min']) return `Value must be at least ${errors['min'].min}.`;
-    if (errors?.['max']) return `Value must be at most ${errors['max'].max}.`;
-    if (errors?.['maxLength']) return `Value max length is ${errors['maxLength'].maxAllowed} currently ${errors['maxLength'].numberEntered}`;
-    return 'Invalid input.';
+    if (this.isInvalid) {
+      const errors = this.control.errors;
+      if (errors?.['required']) {
+        this.errorMessageKPS = `Please enter a ${this.label.toLowerCase()}.`;
+      } else if (errors?.['min']) {
+        this.errorMessageKPS = `Value must be at least ${errors['min'].min}.`;
+      } else if (errors?.['max']) {
+        this.errorMessageKPS = `Value must be at most ${errors['max'].max}.`;
+      } else if (errors?.['maxlength']) {
+        this.errorMessageKPS = `Maximum length for this field is ${errors['maxlength'].requiredLength} there are currently ${errors['maxlength'].actualLength} characters`;
+      } else if (errors?.['minlength']) {
+        this.errorMessageKPS = `Minimum length for this field is ${errors['minlength'].requiredLength} there are currently ${errors['minlength'].actualLength} characters`;
+      } else if (errors?.['email']) {
+        this.errorMessageKPS = 'Please enter a valid email';
+      } else {
+        this.errorMessageKPS = 'Invalid input.';
+      }
+    } else {
+      this.errorMessageKPS = ''
+    }
+    return this.errorMessageKPS;
   }
 
   externalValueChange(newValue: any) {
