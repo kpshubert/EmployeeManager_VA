@@ -38,7 +38,7 @@ describe('AppComponent', () => {
       phone: '5018888888',
       email: 'test@testserver.com',
       departmentId: 0,
-      departmentIdString: '0',
+      departmentIdString: '',
       departmentName: 'Chief Cook and Bottle Washer',
       formMode: 'edit'
     }];

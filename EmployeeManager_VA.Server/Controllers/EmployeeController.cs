@@ -61,7 +61,7 @@ namespace EmployeeManager_VA.Server.Controllers
                 {
                     FormMode = "add",
                     DepartmentId = 0,
-                    DepartmentIdString = "0"
+                    DepartmentIdString = ""
                 };
                 returnValue.Add(new EmployeeViewModel());
             }
