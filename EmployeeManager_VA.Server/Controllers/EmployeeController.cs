@@ -87,7 +87,8 @@ namespace EmployeeManager_VA.Server.Controllers
 
                     if (addResult > 0)
                     {
-                        actionResult = Ok();
+                        var createdAtAction = new CreatedAtActionResult("post", "employee", new { id = newTEmEmployee.Id }, newTEmEmployee);
+                        actionResult = createdAtAction;
                     }
                     else
                     {
@@ -108,7 +109,8 @@ namespace EmployeeManager_VA.Server.Controllers
 
                         if (updateResult > 0)
                         {
-                            actionResult = Ok();
+                            var updatedAtAction = new AcceptedAtActionResult("post", "employee", new { id = rowToUpdate.Id }, rowToUpdate);
+                            actionResult = updatedAtAction;
                         }
                         else
                         {

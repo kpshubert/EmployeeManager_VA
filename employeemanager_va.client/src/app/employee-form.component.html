@@ -19,7 +19,7 @@
   <div class="col-md-1"></div>
   <div class="col-md-10">
     <div class="d-flex justify-content-start">
-      <button id="btnAddEmployee" (click)="addButtonClick($event)" class="btn btn-success">Add New</button>
+      <button id="btnAddEmployee" (click)="addButtonClick($event)" class="btn btn-success"><fa-icon [icon]="faPlusCircle"></fa-icon>&nbsp;Add New</button>
     </div>
   </div>
   <div class="col-md-1"></div>
@@ -83,44 +83,21 @@
         </div>
         <div class="row mb-3">
           <div class="col-md-12">
-            <div class="row mb-2">
-              <div class="form-floating mb-1">
-                <select (change)="departmentSelectChange($event)" [class.is-invalid]="this.departmentIdIsInvalid" class="form-select" formControlName="departmentIdString">
-                  <option value="">--please select--</option>
-                  @for(option of departments; track option.id) {
-                  <option value="{{ option.idString }}">
-                    {{ option.name }}
-                  </option>
-                  }
-                </select>
-                <label for="departmentIdString">Department</label>
-              </div>
-            </div>
-            @if (this.departmentErrorMessage.length > 0) {
-            <div class="row mb-2">
-              <div class="col-md-12">
-                <span class="text-light bg-danger rounded rounded-2 p-1 mb-3 mt-3">
-                  <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.departmentErrorMessage }}
-                </span>
-              </div>
-            </div>
-            }
+            <validated-select-component #employeeDepartmentControl
+                                        label="Department"
+                                        [required]="true"
+                                        (valueChange)="onSubControlChange($event, 'departmentIdString')"
+                                        (blur)="onSubControlBlur($event, 'department')">
+            </validated-select-component>
           </div>
         </div>
       </fieldset>
       <div class="row mb-3">
         <div class="col-md-12">
-          <button class="btn btn-success" type="submit"><span class="fas fa-save"></span>&nbsp;{{ this.submitButtonText }}</button>
+          <button class="btn btn-success" type="submit"><fa-icon [icon]="this.saveButtonIcon"></fa-icon>&nbsp;{{ this.submitButtonText }}</button>
         </div>
       </div>
     </div>
     <div class="col-md-1"></div>
   </div>
 </form>
-<div class="row mb-3">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
-    <button class="btn btn-warning" id="btnJqueryTest">Jquery Test</button>
-  </div>
-  <div class="col-md-1"></div>
-</div>
