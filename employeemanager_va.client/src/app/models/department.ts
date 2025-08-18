@@ -1,5 +1,6 @@
 export interface Department {
-  id: number,
+  [id: string]: string | number,
   idString: string,
-  name: string
+  name: string,
+  formMode: string
 }

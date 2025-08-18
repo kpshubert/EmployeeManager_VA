@@ -1,27 +1,35 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Employee } from './models/employee';
 import { Department } from './models/department';
 import { StatusMessageParameters } from './models/StatusMessageParameters';
 import { EmployeeService } from './employee.service';
+import { DepartmentService } from './department.service';
 import { EmployeeTable } from './employee-table.component';
 import { ValidatedTextboxComponent } from './validated-textbox/validated-textbox.component';
+import { ValidatedSelectComponent } from './validated-select/validated-select.component';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { ObjToKeysPipe } from './Pipes/objToKeys';
 import { valHooks } from 'jquery';
+import { SelectOptions } from './models/select-options.data';
 
 @Component({
   selector: 'employee-form',
   templateUrl: './employee-form.component.html',
   styleUrl: './employee-form.component.css',
-  providers: [EmployeeService],
+  providers: [
+    EmployeeService,
+    DepartmentService
+  ],
   imports: [EmployeeTable,
     ReactiveFormsModule,
-    ValidatedTextboxComponent
+    ValidatedTextboxComponent,
+    ValidatedSelectComponent,
+    FontAwesomeModule
   ]
 })
-
 export class EmployeeFormComponent implements OnInit, AfterViewInit {
   public employees: Employee[] = [];
   public departments: Department[] = [];
@@ -51,14 +59,14 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   public department: Department = {
     id: 0,
     idString: '0',
-    name: ''
+    name: '',
+    formMode: 'add'
   };
 
   employeeForm: FormGroup;
 
-  constructor(private http: HttpClient, private employeeService: EmployeeService, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private employeeService: EmployeeService, private departmentService: DepartmentService, private fb: FormBuilder, library: FaIconLibrary) {
     this.employeeForm = this.fb.group({
-      departmentIdString: ['', [Validators.required]]
     });
   }
 
@@ -81,35 +89,22 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     this.employeeForm.get('email')?.setValue(this.employee.email);
     this.employeePhoneControl?.externalValueChange(this.employee.phone);
     this.employeeForm.get('phone')?.setValue(this.employee.phone);
+    this.employeeDepartmentControl?.externalValueChange(this.employee.departmentIdString);
     this.employeeForm.get('departmentIdString')?.setValue(this.employee.departmentIdString);
-    this.employeeForm.get('departmentIdString')?.updateValueAndValidity();
     this.setInvalidMessages();
   }
 
   async ngOnInit() {
     this.employee = await this.employeeService.getEmployee(0);
-    this.getDepartments(0, 'list', '');
+    this.departments = await this.departmentService.getDepartments(0, 'list', '');
     this.setInvalidMessages();
+    this.departmentOptions = await this.createDepartmentOptions();
+    if (this.employeeDepartmentControl !== null && this.employeeDepartmentControl !== undefined) {
+      this.employeeDepartmentControl.selectOptions = await this.createDepartmentOptions();
+    }
   }
 
   ngAfterViewInit() {
-    this.setUpJqueryTestButton();
-  }
-
-  getDepartments(idIn: number, modeIn: string, filterIn: string) {
-    const parms = new HttpParams().set('id', idIn).set('mode', modeIn).set('filter', filterIn);
-
-    this.http.get<Department[]>('/department', { params: parms }).subscribe(
-      (result) => {
-        this.departments = result;
-        if (this.departments.length === 1) {
-          this.department = this.departments[0];
-        }
-      },
-      (error) => {
-        console.error(error);
-      }
-    )
   }
 
   @ViewChild('childEmployeeTable') childEmployeeTable: EmployeeTable | undefined;
@@ -117,6 +112,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   @ViewChild('employeeLastNameControl') employeeLastNameControl: ValidatedTextboxComponent | undefined;
   @ViewChild('employeePhoneControl') employeePhoneControl: ValidatedTextboxComponent | undefined;
   @ViewChild('employeeEmailControl') employeeEmailControl: ValidatedTextboxComponent | undefined;
+  @ViewChild('employeeDepartmentControl') employeeDepartmentControl: ValidatedSelectComponent | undefined;
 
   title = 'EmployeeManager_VA.client';
   faCheckCircle = faCheckCircle;
@@ -125,17 +121,29 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
   faWindowClose = faWindowClose;
   faSave = faSave;
   saveButtonIcon = faPlusCircle;
+  faPlusCircle = faPlusCircle;
   submitButtonText = 'Add';
   statusMessage = '';
   processResultMessage = '';
   departmentErrorMessage: string = '';
+  departmentOptions: SelectOptions[] = [];
 
   async Submit() {
     this.setInvalidMessages();
     if (this.employeeForm.valid && this.customControlsAreValid()) {
-      this.lazyLoadEmployeesTable('');
+      let newDepartmentId: number = parseInt(this.employee['departmentIdString'], 10);
+      this.employee['departmentId'] = newDepartmentId;
       this.employeeService.employee = this.employee;
       this.processResultMessage = await this.employeeService.postEmployeeData();
+      let submitButtonText: string = 'Update';
+      let saveButtonIcon: IconDefinition = faSave;
+      if (this.employee.formMode === 'add') {
+        submitButtonText = 'Add';
+        saveButtonIcon  = faPlusCircle;
+      }
+      this.submitButtonText = submitButtonText;
+      this.saveButtonIcon = saveButtonIcon;
+
       this.showStatusMessage({ MessageText: this.processResultMessage, TimeoutIn: 5 });
       await this.childEmployeeTable?.refreshDataTable();
     } else {
@@ -147,26 +155,8 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     this.employeeService.employee = this.employee;
     this.employeeService.addEmployee();
     this.changeFormValues();
-  }
-
-  departmentSelectChange(event: Event) {
-
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    const selectedValueNumber = parseInt(selectedValue);
-
-    this.employee.departmentId = selectedValueNumber;
-    this.setInvalidMessages();
-  }
-
-  setUpJqueryTestButton() {
-    $("#btnJqueryTest").css('color', 'blue');
-    $("#btnJqueryTest").on('click', function () {
-      alert('Jquery event test!');
-    });
-  }
-
-  async lazyLoadEmployeesTable(event: any) {
-    this.employee = await this.employeeService.getEmployee(0);
+    this.submitButtonText = 'Add';
+    this.saveButtonIcon = faPlusCircle;
   }
 
   showStatusMessage(statusMessageParameters: StatusMessageParameters) {
@@ -212,16 +202,11 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     let lastNameErrorMessage = this.employeeLastNameControl?.errorMessage;
     let emailErrorMessage = this.employeeEmailControl?.errorMessage;
     let phoneErrorMessage = this.employeePhoneControl?.errorMessage;
-    this.departmentErrorMessage = this.getInvalidMessage('departmentIdString', 'department');
+    let departmentErrorMessage = this.employeeDepartmentControl?.errorMessage
   }
 
   getFormControl<FormControl>(formControlName: string) {
     return this.employeeForm.controls[formControlName] as FormControl;
-  }
-
-  setEmployeeFieldValue<T>(fieldNameIn: string, fieldValue: string) {
-    let fieldName: string = fieldNameIn || '';
-    this.employee[fieldName] = fieldValue;
   }
 
   onSubControlBlur(value: any, updateField: string) {
@@ -249,5 +234,17 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   get departmentIdIsInvalid(): boolean {
     return this.employeeForm.controls['departmentIdString'].invalid; // && (this.control.touched || this.control.dirty);
+  }
+
+  async createDepartmentOptions() {
+    let departmentOptions: SelectOptions[] = []
+
+    let departmentRecords: Department[] = await this.departmentService.getDepartments(0, 'list', '');
+
+    for (let departmentOption of departmentRecords) {
+      let departmentOpt = { key: departmentOption.idString, value: departmentOption.name }
+      departmentOptions.push(departmentOpt);
+    }
+    return departmentOptions;
   }
 }

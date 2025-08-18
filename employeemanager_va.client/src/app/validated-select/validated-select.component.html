@@ -1,0 +1,40 @@
+<div class="form-group">
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div class="form-floating mb-1">
+        <select [id]="label.toLowerCase().replace(' ', '-')"
+                [formControl]="control"
+                (input)="onInput($event)"
+                (blur)="onTouched($event)"
+                [required]="required"
+                class="form-control"
+                [class.is-invalid]="isInvalid">
+          <option value="">--please select--</option>
+          @for(option of selectOptions; track option.key) {
+          <option value="{{ option.key }}">
+            {{ option.value }}
+          </option>
+          }
+        </select>
+        <label [for]="label.toLowerCase().replace(' ', '-')">
+          {{ label }}
+        </label>
+      </div>
+    </div>
+  </div>
+  @if (isInvalid) {
+  <div class="invalid-feedback">
+    {{ errorMessage }}
+  </div>
+  }
+
+  @if (this.errorMessageKPS.length > 0) {
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <span class="text-light bg-danger rounded rounded-2 p-1 mb-3 mt-3">
+        <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.errorMessageKPS }}
+      </span>
+    </div>
+  </div>
+  }
+</div>
