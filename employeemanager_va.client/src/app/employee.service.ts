@@ -8,7 +8,6 @@ import { firstValueFrom } from 'rxjs';
 })
 
 export class EmployeeService {
-
   public employees: Employee[] = [];
 
   public employee: Employee = {
@@ -23,7 +22,6 @@ export class EmployeeService {
     departmentName: '',
     formMode: 'add'
   };
-
   constructor(private http: HttpClient) {
   }
 
@@ -63,13 +61,17 @@ export class EmployeeService {
     const httpHeaders = new HttpHeaders({ 'content-type': 'application/json' });
 
     const processType = this.employee['formMode'] === 'edit' ? 'Employee update' : 'Employee add';
-
+ 
     try {
-      const response = await firstValueFrom(this.http.post('/employee', this.employee, { headers: httpHeaders }));
+      let postReturn = this.http.post('/employee', this.employee, { headers: httpHeaders })
+      const response = await firstValueFrom(postReturn);
+      if (this.employee.formMode === 'add') {
+        let employeeFromResponse: Employee = response as Employee;
+        this.employee.id = employeeFromResponse.id;
+        this.employee.formMode = 'edit';
+      }
       console.log('Post successful: ', response);
-
       return processType + ' succeeded';
-
     } catch (error) {
       console.error('Post failed: ', error);
       return processType + ' failed.';
@@ -87,5 +89,5 @@ export class EmployeeService {
       console.error('Delete failed:', error);
       return processType + 'failed';
     }
-  }  
+  }
 }
