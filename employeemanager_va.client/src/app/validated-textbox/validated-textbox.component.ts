@@ -22,7 +22,6 @@ export class ValidatedTextboxComponent implements OnInit {
   @Output() blur = new EventEmitter<any>();
 
   control: FormControl = new FormControl('', []);
-  errorMessageKPS: string = '';
 
   ngOnInit() {
     const validators = [];
@@ -60,6 +59,7 @@ export class ValidatedTextboxComponent implements OnInit {
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.value = target.value;
+    this.errorMessage;
   }
 
   onTouched(event: Event): void {
@@ -72,28 +72,27 @@ export class ValidatedTextboxComponent implements OnInit {
     return this.control.invalid; // && (this.control.touched || this.control.dirty);
   }
 
-  get errorMessage(): string | null {
+  get errorMessage(): string {
+    let returnValue: string = '';
     if (this.isInvalid) {
       const errors = this.control.errors;
       if (errors?.['required']) {
-        this.errorMessageKPS = `Please enter a ${this.label.toLowerCase()}.`;
+        returnValue = `Please enter a ${this.label.toLowerCase()}.`;
       } else if (errors?.['min']) {
-        this.errorMessageKPS = `Value must be at least ${errors['min'].min}.`;
+        returnValue = `Value must be at least ${errors['min'].min}.`;
       } else if (errors?.['max']) {
-        this.errorMessageKPS = `Value must be at most ${errors['max'].max}.`;
+        returnValue = `Value must be at most ${errors['max'].max}.`;
       } else if (errors?.['maxlength']) {
-        this.errorMessageKPS = `Maximum length for this field is ${errors['maxlength'].requiredLength} there are currently ${errors['maxlength'].actualLength} characters`;
+        returnValue = `Maximum length for this field is ${errors['maxlength'].requiredLength} there are currently ${errors['maxlength'].actualLength} characters`;
       } else if (errors?.['minlength']) {
-        this.errorMessageKPS = `Minimum length for this field is ${errors['minlength'].requiredLength} there are currently ${errors['minlength'].actualLength} characters`;
+        returnValue = `Minimum length for this field is ${errors['minlength'].requiredLength} there are currently ${errors['minlength'].actualLength} characters`;
       } else if (errors?.['email']) {
-        this.errorMessageKPS = 'Please enter a valid email';
+        returnValue = 'Please enter a valid email';
       } else {
-        this.errorMessageKPS = 'Invalid input.';
+        returnValue = 'Invalid input.';
       }
-    } else {
-      this.errorMessageKPS = ''
     }
-    return this.errorMessageKPS;
+    return returnValue;
   }
 
   externalValueChange(newValue: any) {
