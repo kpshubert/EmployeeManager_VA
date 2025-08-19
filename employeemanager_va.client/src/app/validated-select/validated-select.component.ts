@@ -17,7 +17,6 @@ export class ValidatedSelectComponent {
   @Output() blur = new EventEmitter<any>();
 
   control: FormControl = new FormControl('', []);
-  errorMessageKPS: string = '';
 
   ngOnInit() {
     const validators = [];
@@ -56,18 +55,17 @@ export class ValidatedSelectComponent {
     return this.control.invalid; // && (this.control.touched || this.control.dirty);
   }
 
-  get errorMessage(): string | null {
+  get errorMessage(): string {
+    let returnValue: string = '';
     if (this.isInvalid) {
       const errors = this.control.errors;
       if (errors?.['required']) {
-        this.errorMessageKPS = `Please enter a ${this.label.toLowerCase()}.`;
+        returnValue = `Please enter a ${this.label.toLowerCase()}.`;
       } else {
-        this.errorMessageKPS = 'Invalid input.';
+        returnValue = 'Invalid input.';
       }
-    } else {
-      this.errorMessageKPS = ''
     }
-    return this.errorMessageKPS;
+    return returnValue;
   }
 
   externalValueChange(newValue: any) {

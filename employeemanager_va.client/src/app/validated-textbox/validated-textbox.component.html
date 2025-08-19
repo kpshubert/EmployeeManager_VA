@@ -17,17 +17,11 @@
       </div>
     </div>
   </div>
-  @if (isInvalid) {
-  <div class="invalid-feedback">
-    {{ errorMessage }}
-  </div>
-  }
-
-  @if (this.errorMessageKPS.length > 0) {
+  @if (this.errorMessage.length > 0) {
   <div class="row mb-2">
     <div class="col-md-12">
       <span class="text-light bg-danger rounded rounded-2 p-1 mb-3 mt-3">
-        <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.errorMessageKPS }}
+        <span class="fas fa-exclamation-circle"></span>&nbsp;{{ this.errorMessage }}
       </span>
     </div>
   </div>
