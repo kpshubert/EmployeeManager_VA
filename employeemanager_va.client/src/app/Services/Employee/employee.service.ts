@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Employee } from './models/employee';
+import { Employee } from '../../Models/employee';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({

@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule, MaxLengthValidator } from '@angular/forms';
-import { SelectOptions } from '../models/select-options.data';
+import { SelectOptions } from '../../../Models/select-options.data';
 
 @Component({
   selector: 'validated-select-component',
