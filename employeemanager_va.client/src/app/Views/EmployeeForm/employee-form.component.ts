@@ -1,18 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { Employee } from './models/employee';
-import { Department } from './models/department';
-import { StatusMessageParameters } from './models/StatusMessageParameters';
-import { EmployeeService } from './employee.service';
-import { DepartmentService } from './department.service';
-import { EmployeeTable } from './employee-table.component';
-import { ValidatedTextboxComponent } from './validated-textbox/validated-textbox.component';
-import { ValidatedSelectComponent } from './validated-select/validated-select.component';
+import { Employee } from '../../Models/employee';
+import { Department } from '../..//Models/department';
+import { StatusMessageParameters } from '../../Models/StatusMessageParameters';
+import { EmployeeService } from '../../Services/Employee/employee.service';
+import { DepartmentService } from '../../Services/Department/department.service';
+import { EmployeeTable } from '../EmployeeTable/employee-table.component';
+import { ValidatedTextboxComponent } from '../../Shared/Modules/validated-textbox/validated-textbox.component';
+import { ValidatedSelectComponent } from '../../Shared/Modules/validated-select/validated-select.component';
 import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
-import { ObjToKeysPipe } from './Pipes/objToKeys';
+import { ObjToKeysPipe } from '../../Pipes/objToKeys';
 import { valHooks } from 'jquery';
-import { SelectOptions } from './models/select-options.data';
+import { SelectOptions } from '../../Models/select-options.data';
 
 @Component({
   selector: 'employee-form',
