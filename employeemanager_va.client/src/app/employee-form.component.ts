@@ -1,5 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Employee } from './models/employee';
@@ -10,7 +9,7 @@ import { DepartmentService } from './department.service';
 import { EmployeeTable } from './employee-table.component';
 import { ValidatedTextboxComponent } from './validated-textbox/validated-textbox.component';
 import { ValidatedSelectComponent } from './validated-select/validated-select.component';
-import { ReactiveFormsModule, FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { ObjToKeysPipe } from './Pipes/objToKeys';
 import { valHooks } from 'jquery';
 import { SelectOptions } from './models/select-options.data';
@@ -30,7 +29,7 @@ import { SelectOptions } from './models/select-options.data';
     FontAwesomeModule
   ]
 })
-export class EmployeeFormComponent implements OnInit, AfterViewInit {
+export class EmployeeFormComponent implements OnInit {
   public employees: Employee[] = [];
   public departments: Department[] = [];
 
@@ -65,7 +64,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
 
   employeeForm: FormGroup;
 
-  constructor(private http: HttpClient, private employeeService: EmployeeService, private departmentService: DepartmentService, private fb: FormBuilder, library: FaIconLibrary) {
+  constructor(private employeeService: EmployeeService, private departmentService: DepartmentService, private fb: FormBuilder, library: FaIconLibrary) {
     this.employeeForm = this.fb.group({
     });
   }
@@ -102,9 +101,6 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     if (this.employeeDepartmentControl !== null && this.employeeDepartmentControl !== undefined) {
       this.employeeDepartmentControl.selectOptions = await this.createDepartmentOptions();
     }
-  }
-
-  ngAfterViewInit() {
   }
 
   @ViewChild('childEmployeeTable') childEmployeeTable: EmployeeTable | undefined;
