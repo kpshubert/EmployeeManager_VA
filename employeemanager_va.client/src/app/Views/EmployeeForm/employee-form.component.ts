@@ -13,6 +13,8 @@ import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { ObjToKeysPipe } from '../../Pipes/objToKeys';
 import { valHooks } from 'jquery';
 import { SelectOptions } from '../../Models/select-options.data';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http'
 
 @Component({
   selector: 'employee-form',
@@ -64,7 +66,7 @@ export class EmployeeFormComponent implements OnInit {
 
   employeeForm: FormGroup;
 
-  constructor(private employeeService: EmployeeService, private departmentService: DepartmentService, private fb: FormBuilder, library: FaIconLibrary) {
+  constructor( private route: ActivatedRoute, private employeeService: EmployeeService, private departmentService: DepartmentService, private fb: FormBuilder, library: FaIconLibrary) {
     this.employeeForm = this.fb.group({
     });
   }
