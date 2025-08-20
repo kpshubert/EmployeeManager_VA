@@ -1,0 +1,56 @@
+@if(this.statusMessage.length >0) {
+<div class="sticky-top">
+  <div class="row md-3">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="d-flex justify-content-center alert alert-info border border-primary ronded rounded-3 fw-bold">{{ this.statusMessage }}</div>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+</div>}
+<div class="row mb-3">
+  <div class="col-md-1"></div>
+  <div class="col-md-10">
+    <h1 id="tableLabel">Department Management</h1>
+  </div>
+  <div class="col-md-1"></div>
+</div>
+<div class="row mb-3">
+  <div class="col-md-1"></div>
+  <div class="col-md-10">
+    <div class="d-flex justify-content-start">
+      <button id="btnAddDepartment" (click)="addButtonClick($event)" class="btn btn-success"><fa-icon [icon]="faPlusCircle"></fa-icon>&nbsp;Add New</button>
+    </div>
+  </div>
+  <div class="col-md-1"></div>
+</div>
+<form [formGroup]="departmentForm" (ngSubmit)="Submit()">
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <department-table #childDepartmentTable (reloadAfterClientEditClick)="reloadAfterClientEditClick($event)" (showStatusMessage)="showStatusMessage($event)"></department-table>
+      <fieldset class="border border-primary rounded rounded-3 p-3 mb-3">
+        <legend>Department Information</legend>
+        <div class="row mb-3">
+          <div id="dvFirstName" class="col-md-6">
+            <validated-textbox-component #departmentNameControl
+                                         label="Department Name"
+                                         type="text"
+                                         placeholder="Department Name"
+                                         [maxLength]=100
+                                         [required]="true"
+                                         (valueChange)="onSubControlChange($event, 'name')"
+                                         (blur)="onSubControlBlur($event, 'name')">
+            </validated-textbox-component>
+          </div>
+        </div>
+      </fieldset>
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <button class="btn btn-success" type="submit"><fa-icon [icon]="this.saveButtonIcon"></fa-icon>&nbsp;{{ this.submitButtonText }}</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+</form>

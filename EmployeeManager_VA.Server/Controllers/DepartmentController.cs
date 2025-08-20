@@ -20,31 +20,43 @@ namespace EmployeeManager_VA.Server.Controllers
 
             if (id != null && id != 0)
             {
-                departments = [.. employeeManagerDbContext.TEmDepartments.Where(d => d.Id == id)];
+                departments = await employeeManagerDbContext.TEmDepartments.Where(e => e.Id == id).ToListAsync();
             }
             else
             {
                 if (mode != null && mode.ToLower() == "list")
                 {
-                    departments = [.. employeeManagerDbContext.TEmDepartments];
+                    departments = await employeeManagerDbContext.TEmDepartments.ToListAsync();
                 }
             }
 
             if (departments.Count > 0)
             {
+                var currentRow = 0;
                 foreach (var department in departments)
                 {
-                    var newDeparment = new DepartmentViewModel();
+                    var newDepartmentViewModel = new DepartmentViewModel();
 
-                    Utilities.Utilities.CopySharedPropertyValues<TEmDepartment, DepartmentViewModel>(department, newDeparment);
+                    Utilities.Utilities.CopySharedPropertyValues<TEmDepartment, DepartmentViewModel>(department, newDepartmentViewModel);
 
-                    newDeparment.IdString = newDeparment.Id.ToString();
+                    if (department.Name != null)
+                    {
+                        if (mode != "list")
+                        {
+                            newDepartmentViewModel.FormMode = "edit";
+                        }
+                    }
 
-                    returnValue.Add(newDeparment);
+                    returnValue.Add(newDepartmentViewModel);
+                    currentRow++;
                 }
             }
             else
             {
+                var newDepartmentViewModel = new DepartmentViewModel
+                {
+                    FormMode = "add",
+                };
                 returnValue.Add(new DepartmentViewModel());
             }
 
