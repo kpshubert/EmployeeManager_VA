@@ -1,18 +1,20 @@
 import { provideHttpClient, withInterceptorsFromDi, withFetch } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { EmployeeFormComponent } from './Views/EmployeeForm/employee-form.component';
+import { AppRoutingModule, routes } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { provideRouter } from '@angular/router';
 import Lara from '@primeuix/themes/aura';
 import * as $ from "jquery";
+import { AppComponent } from './Views/app/app.component';
 
 @NgModule({
-  bootstrap: [EmployeeFormComponent],
+  bootstrap: [AppComponent],
   imports: [BrowserModule,
     AppRoutingModule,
+    AppComponent,
     NgbModule
   ],
   providers: [provideHttpClient(withFetch(),
@@ -22,7 +24,8 @@ import * as $ from "jquery";
       theme: {
         preset: Lara
       }
-    })
+    }),
+    provideRouter(routes)
   ]
 })
 export class AppModule {

@@ -37,24 +37,29 @@ export class DepartmentService {
   }
 
   addDepartment(): Department {
+    this.department['rowNum'] = 0;
     this.department['id'] = 0;
     this.department['idString'] = '';
     this.department['name'] = '';
-    this.department['formMode'] = 'add'
+    this.department['formMode'] = 'add';
     return this.department;
   }
 
   async postDepartmentData() {
     const httpHeaders = new HttpHeaders({ 'content-type': 'application/json' });
 
-    const processType = this.department['formMode'] === 'edit' ? 'Departmenr update' : 'Department add';
+    const processType = this.department['formMode'] === 'edit' ? 'Department update' : 'Department add';
 
     try {
-      const response = await firstValueFrom(this.http.post('/department', this.department, { headers: httpHeaders }));
+      let postReturn = this.http.post('/department', this.department, { headers: httpHeaders })
+      const response = await firstValueFrom(postReturn);
+      if (this.department.formMode === 'add') {
+        let departmentFromResponse: Department = response as Department;
+        this.department.idString = departmentFromResponse.idString;
+        this.department.formMode = 'edit';
+      }
       console.log('Post successful: ', response);
-
       return processType + ' succeeded';
-
     } catch (error) {
       console.error('Post failed: ', error);
       return processType + ' failed.';
