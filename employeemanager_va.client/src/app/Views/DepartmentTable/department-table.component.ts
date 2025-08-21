@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { EventEmitter, Output } from '@angular/core';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
-import { faWindowClose, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faWindowClose, faUser, faInfoCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Table, TableModule } from 'primeng/table';
 import { DepartmentService } from '../../Services/Department/department.service';
 import { Department } from '../../Models/department';
@@ -18,7 +19,8 @@ import { ConfirmationService } from 'primeng/api';
   imports: [CommonModule,
     ConfirmDialogModule,
     ButtonModule,
-    TableModule
+    TableModule,
+    FontAwesomeModule
   ],
   providers: [DepartmentService, ConfirmationService]
 })
@@ -40,7 +42,7 @@ export class DepartmentTable implements OnInit {
   applyFilterGlobal($event: any, stringVal: any) {
     this.dtDepartments?.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
   }
-  constructor(private departmentService: DepartmentService, private confirmationService: ConfirmationService) {
+  constructor(private departmentService: DepartmentService, private confirmationService: ConfirmationService, library: FaIconLibrary) {
   }
 
   async ngOnInit() {
@@ -49,6 +51,7 @@ export class DepartmentTable implements OnInit {
 
   faWindowClose = faWindowClose;
   faUser = faUser;
+  faInfoCircle = faInfoCircle;
   deleteId: number = 0;
 
   editButtonClick(event: any, idIn: number) {

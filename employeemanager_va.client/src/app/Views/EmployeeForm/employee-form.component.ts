@@ -61,7 +61,8 @@ export class EmployeeFormComponent implements OnInit {
     id: 0,
     idString: '0',
     name: '',
-    formMode: 'add'
+    formMode: 'add',
+    isAssigned: false
   };
 
   employeeForm: FormGroup;
@@ -212,6 +213,10 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   onSubControlChange(value: any, updateField: string) {
+    this.employee[updateField] = value;
+  }
+
+  onSelectSubControlChange(value: any, updateField: string) {
     this.employee[updateField] = value;
   }
 

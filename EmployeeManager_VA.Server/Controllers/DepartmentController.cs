@@ -20,13 +20,13 @@ namespace EmployeeManager_VA.Server.Controllers
 
             if (id != null && id != 0)
             {
-                departments = await employeeManagerDbContext.TEmDepartments.Where(e => e.Id == id).ToListAsync();
+                departments = await employeeManagerDbContext.TEmDepartments.Include(employees => employees.TEmEmployees).Where(e => e.Id == id).ToListAsync();
             }
             else
             {
-                if (mode != null && mode.ToLower() == "list")
+                if (mode != null && mode.Equals("list", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    departments = await employeeManagerDbContext.TEmDepartments.ToListAsync();
+                    departments = await employeeManagerDbContext.TEmDepartments.Include(employees => employees.TEmEmployees).ToListAsync();
                 }
             }
 
@@ -41,6 +41,8 @@ namespace EmployeeManager_VA.Server.Controllers
 
                     if (department.Name != null)
                     {
+                        newDepartmentViewModel.IsAssigned = department.TEmEmployees != null && department.TEmEmployees.Count != 0;
+                        newDepartmentViewModel.IdString = department.Id.ToString();
                         if (mode != "list")
                         {
                             newDepartmentViewModel.FormMode = "edit";
@@ -119,7 +121,7 @@ namespace EmployeeManager_VA.Server.Controllers
             }
             return actionResult;
         }
- 
+
         [HttpDelete(Name = "DeleteDepartment")]
         public async Task<IActionResult> Delete(int? Id)
         {
@@ -135,16 +137,23 @@ namespace EmployeeManager_VA.Server.Controllers
 
                 if (departmentRow != null)
                 {
-                    employeeManagerDbContext.TEmDepartments.Remove(departmentRow);
-                    var deleteResult = await employeeManagerDbContext.SaveChangesAsync();
-
-                    if (deleteResult > 0)
+                    if (departmentRow.TEmEmployees.Count == 0)
                     {
-                        returnValue = Ok();
+                        employeeManagerDbContext.TEmDepartments.Remove(departmentRow);
+                        var deleteResult = await employeeManagerDbContext.SaveChangesAsync();
+
+                        if (deleteResult > 0)
+                        {
+                            returnValue = Ok();
+                        }
+                        else
+                        {
+                            returnValue = NotFound("Department Delete Failed.");
+                        }
                     }
                     else
                     {
-                        returnValue = NotFound("Department Delete Failed.");
+                        returnValue = BadRequest("Department has employees assigned");
                     }
                 }
                 else

@@ -13,7 +13,8 @@ export class DepartmentService {
     id: 0,
     idString: '',
     name: '',
-    formMode: 'add'
+    formMode: 'add',
+    isAssigned: false
   };
   constructor(private http: HttpClient) {
   }
