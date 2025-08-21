@@ -34,7 +34,8 @@ export class DepartmentFormComponent implements OnInit {
     id: 0,
     idString: '',
     name: '',
-    formMode: 'add'
+    formMode: 'add',
+    isAssigned: false
   };
 
   departmentForm: FormGroup;
