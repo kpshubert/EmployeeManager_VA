@@ -1,6 +1,7 @@
 export interface Department {
-  [id: string]: string | number,
+  [id: string]: string | number | boolean,
   idString: string,
   name: string,
-  formMode: string
+  formMode: string,
+  isAssigned: boolean
 }

@@ -82,12 +82,12 @@
           </div>
         </div>
         <div class="row mb-3">
-          <div class="col-md-12">
+          <div class="col-md-6">
             <validated-select-component #employeeDepartmentControl
                                         label="Department"
                                         [required]="true"
-                                        (valueChange)="onSubControlChange($event, 'departmentIdString')"
-                                        (blur)="onSubControlBlur($event, 'department')">
+                                        (valueChange)="onSelectSubControlChange($event, 'departmentIdString')"
+                                        (blur)="onSubControlBlur($event, 'departmentIdString')">
             </validated-select-component>
           </div>
         </div>
