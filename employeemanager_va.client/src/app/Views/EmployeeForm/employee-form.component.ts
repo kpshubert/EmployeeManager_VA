@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, faInfoCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, faExclamationTriangle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Employee } from '../../Models/employee';
 import { Department } from '../..//Models/department';
@@ -119,7 +119,7 @@ export class EmployeeFormComponent implements OnInit {
   faUser = faUser;
   faWindowClose = faWindowClose;
   faSave = faSave;
-  faInfoCircle = faInfoCircle;
+  faExclamationTriangle = faExclamationTriangle;
   saveButtonIcon = faPlusCircle;
   faPlusCircle = faPlusCircle;
   submitButtonText = 'Add';
