@@ -13,10 +13,10 @@ namespace EmployeeManager_VA.Server.Controllers
         private readonly ILogger<DepartmentController> _logger = logger;
 
         [HttpGet(Name = "GetDepartment")]
-        public async Task<IEnumerable<DepartmentViewModel>> Get(int? id, string? mode, string? filter)
+        public async Task<IEnumerable<DepartmentViewModel>?> Get(int? id, string? mode, string? filter)
         {
             var departments = new List<TEmDepartment>();
-            var returnValue = new List<DepartmentViewModel>();
+            List<DepartmentViewModel>? returnValue = null;
 
             if (id != null && id != 0)
             {
@@ -30,7 +30,7 @@ namespace EmployeeManager_VA.Server.Controllers
                 }
             }
 
-            if (departments.Count > 0)
+            if (departments != null && departments.Count > 0)
             {
                 var currentRow = 0;
                 foreach (var department in departments)
@@ -49,6 +49,8 @@ namespace EmployeeManager_VA.Server.Controllers
                         }
                     }
 
+                    returnValue ??= [];
+
                     returnValue.Add(newDepartmentViewModel);
                     currentRow++;
                 }
@@ -59,6 +61,9 @@ namespace EmployeeManager_VA.Server.Controllers
                 {
                     FormMode = "add",
                 };
+
+                returnValue ??= [];
+
                 returnValue.Add(new DepartmentViewModel());
             }
 
