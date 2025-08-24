@@ -13,10 +13,11 @@ namespace EmployeeManager_VA.Server.Controllers
         private readonly ILogger<EmployeeController> _logger = logger;
 
         [HttpGet(Name = "GetEmployee")]
-        public async Task<IEnumerable<EmployeeViewModel>> Get(int? id, string? mode, string? filter)
+        public async Task<IEnumerable<EmployeeViewModel>?> Get(int? id, string? mode, string? filter)
         {
-            var employees = new List<TEmEmployee>();
-            var returnValue = new List<EmployeeViewModel>();
+            List<TEmEmployee>? employees = null;
+
+            List<EmployeeViewModel>? returnValue = null;
 
             if (id != null && id != 0)
             {
@@ -30,7 +31,7 @@ namespace EmployeeManager_VA.Server.Controllers
                 }
             }
 
-            if (employees.Count > 0)
+            if (employees != null && employees.Count > 0)
             {
                 var currentRow = 0;
                 foreach (var employee in employees)
@@ -51,6 +52,8 @@ namespace EmployeeManager_VA.Server.Controllers
                         }
                     }
 
+                    returnValue ??= [];
+
                     returnValue.Add(newEmployeeViewModel);
                     currentRow++;
                 }
@@ -63,6 +66,9 @@ namespace EmployeeManager_VA.Server.Controllers
                     DepartmentId = 0,
                     DepartmentIdString = ""
                 };
+
+                returnValue ??= [];
+
                 returnValue.Add(new EmployeeViewModel());
             }
 

@@ -29,7 +29,19 @@ export class EmployeeService {
 
     const parms = new HttpParams().set('id', idIn).set('mode', modeIn).set('filter', filterIn);
 
-    const returnValue = await firstValueFrom(this.http.get<Employee[]>('/employee', { params: parms }));
+    let returnValue: any = null;
+
+    returnValue = await firstValueFrom(this.http.get<Employee[]>('/employee', { params: parms }));
+
+    if (returnValue !== null
+      && returnValue.length === 1
+      && returnValue[0].id === 0
+      && returnValue[0].firstName === ''
+      && returnValue[0].lastName === ''
+      && returnValue[0].phone === ''
+      && returnValue[0].email === '') {
+      returnValue = null;
+    }
 
     return returnValue;
   }

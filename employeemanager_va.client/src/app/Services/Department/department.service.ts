@@ -23,7 +23,17 @@ export class DepartmentService {
 
     const parms = new HttpParams().set('id', idIn).set('mode', modeIn).set('filter', filterIn);
 
-    const returnValue = await firstValueFrom(this.http.get<Department[]>('/department', { params: parms }));
+    let returnValue: any = null;
+
+    returnValue = await firstValueFrom(this.http.get<Department[]>('/department', { params: parms }));
+
+    if (returnValue !== null
+      && returnValue.length === 1
+      && returnValue[0].id === 0
+      && returnValue[0].idString === '0'
+      && returnValue[0].name === '') {
+      returnValue = null;
+    }
 
     return returnValue;
   }

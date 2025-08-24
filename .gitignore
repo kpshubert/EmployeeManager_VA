@@ -9,3 +9,5 @@
 /employeemanager_va.client/obj
 /employeemanager_va.client/node_modules.zip
 *.zip
+/employeemanager_va.client/package-lock.json
+/employeemanager_va.client/package.json

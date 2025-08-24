@@ -1,4 +1,4 @@
-    @if (employees.length > 0) {
+    @if (employees !== null && employees.length > 0) {
 <p-table #dtEmployees
          [value]="this.employees"
          [columns]="columnNames"
@@ -35,9 +35,11 @@
     <tr>
       <td>
         <div class="row">
+          @if(this.hasDepartments) {
           <div class="col-md-auto">
             <button (click)="editButtonClick($event, employeesItem.id)" class="btn btn-success" type="button"><span class="fas fa-user"></span>&nbsp;Edit</button>
           </div>
+          }
           <div class="col-md-auto">
             <button (click)="deleteButtonClick($event, employeesItem.id)" class="btn btn-danger" type="button"><span class="fas fa-window-close"></span>&nbsp;Delete</button>
           </div>

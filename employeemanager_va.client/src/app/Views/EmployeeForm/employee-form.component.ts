@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, faInfoCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Employee } from '../../Models/employee';
 import { Department } from '../..//Models/department';
@@ -13,8 +13,8 @@ import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { ObjToKeysPipe } from '../../Pipes/objToKeys';
 import { valHooks } from 'jquery';
 import { SelectOptions } from '../../Models/select-options.data';
-import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http'
+import { ActivatedRoute } from '@angular/router';import { HttpClient } from '@angular/common/http';
+import { SelectOptionsService } from '../../Services/SelectOptions/select-options.service';
 
 @Component({
   selector: 'employee-form',
@@ -67,7 +67,7 @@ export class EmployeeFormComponent implements OnInit {
 
   employeeForm: FormGroup;
 
-  constructor( private route: ActivatedRoute, private employeeService: EmployeeService, private departmentService: DepartmentService, private fb: FormBuilder, library: FaIconLibrary) {
+  constructor(private route: ActivatedRoute, private employeeService: EmployeeService, private departmentService: DepartmentService, private selectOptionsService: SelectOptionsService, private fb: FormBuilder, library: FaIconLibrary) {
     this.employeeForm = this.fb.group({
     });
   }
@@ -96,14 +96,14 @@ export class EmployeeFormComponent implements OnInit {
     this.setInvalidMessages();
   }
 
-  async ngOnInit() {
-    this.employee = await this.employeeService.getEmployee(0);
+  async ngOnInit() : Promise<void> {
     this.departments = await this.departmentService.getDepartments(0, 'list', '');
-    this.setInvalidMessages();
+    this.hasDepartments = this.departments != null && this.departments.length > 0;
     this.departmentOptions = await this.createDepartmentOptions();
-    if (this.employeeDepartmentControl !== null && this.employeeDepartmentControl !== undefined) {
-      this.employeeDepartmentControl.selectOptions = await this.createDepartmentOptions();
-    }
+    this.selectOptionsService.setSelectOptions(this.departmentOptions);
+    this.employeeDepartmentControl?.onOptionsChange();
+    this.employee = await this.employeeService.getEmployee(0);
+    this.setInvalidMessages();
   }
 
   @ViewChild('childEmployeeTable') childEmployeeTable: EmployeeTable | undefined;
@@ -119,6 +119,7 @@ export class EmployeeFormComponent implements OnInit {
   faUser = faUser;
   faWindowClose = faWindowClose;
   faSave = faSave;
+  faInfoCircle = faInfoCircle;
   saveButtonIcon = faPlusCircle;
   faPlusCircle = faPlusCircle;
   submitButtonText = 'Add';
@@ -126,6 +127,8 @@ export class EmployeeFormComponent implements OnInit {
   processResultMessage = '';
   departmentErrorMessage: string = '';
   departmentOptions: SelectOptions[] = [];
+  hasDepartments: boolean = true;
+  selectOptions: SelectOptions[] = [];
 
   async Submit() {
     this.setInvalidMessages();

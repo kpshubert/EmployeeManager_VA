@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { EventEmitter, Output } from '@angular/core';
+import { EventEmitter, Output, Input } from '@angular/core';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
 import { faWindowClose, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Table, TableModule } from 'primeng/table';
@@ -40,6 +40,8 @@ export class EmployeeTable implements OnInit {
   @Output() reloadAfterClientEditClick: EventEmitter<number> = new EventEmitter();
 
   @Output() showStatusMessage: EventEmitter<StatusMessageParameters> = new EventEmitter();
+
+  @Input() hasDepartments: boolean = true;
 
   applyFilterGlobal($event: any, stringVal: any) {
     this.dtEmployees?.filterGlobal(($event.target as HTMLInputElement).value, stringVal);

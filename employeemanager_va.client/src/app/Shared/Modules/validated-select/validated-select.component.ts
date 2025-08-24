@@ -1,30 +1,54 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormControl, Validators, ReactiveFormsModule, MaxLengthValidator } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SelectOptions } from '../../../Models/select-options.data';
+import { SelectOptionsService } from '../../../Services/SelectOptions/select-options.service';
+import { Subscription } from 'rxjs';
+//import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'validated-select-component',
   templateUrl: './validated-select.component.html',
   styleUrl: './validated-select.component.css',
-  imports: [ReactiveFormsModule]
+  imports: [
+    ReactiveFormsModule //,
+//    NgSelectComponent,
+//    NgSelectModule
+  ]
 })
-export class ValidatedSelectComponent {
+export class ValidatedSelectComponent implements OnInit, OnDestroy {
   @Input() label: string = '';
   @Input() required: boolean = false;
-  @Input() selectOptions: Array<SelectOptions> = [];
 
   @Output() valueChange = new EventEmitter<string>();
   @Output() blur = new EventEmitter<any>();
 
+  receivedSelectOptions: SelectOptions[] = [];
+  private subscription!: Subscription;
   control: FormControl = new FormControl('', []);
 
+  constructor(private selectOptionsService: SelectOptionsService, private changeDetectorRef: ChangeDetectorRef) {
+  }
+
   ngOnInit() {
+    this.subscription = this.selectOptionsService.currentSelectOptions.subscribe(selectOptionsData => {
+      this.receivedSelectOptions = selectOptionsData
+    });
     const validators = [];
     if (this.required) {
       validators.push(Validators.required);
     }
     this.control.setValidators(validators);
     this.control.updateValueAndValidity();
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  public onOptionsChange() {
+    this.changeDetectorRef.detectChanges();
   }
 
   get value(): string {
