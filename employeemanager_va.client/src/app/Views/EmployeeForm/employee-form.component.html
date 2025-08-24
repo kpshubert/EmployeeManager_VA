@@ -7,7 +7,8 @@
     </div>
     <div class="col-md-3"></div>
   </div>
-</div>}
+</div>
+}
 <div class="row mb-3">
   <div class="col-md-1"></div>
   <div class="col-md-10">
@@ -19,7 +20,11 @@
   <div class="col-md-1"></div>
   <div class="col-md-10">
     <div class="d-flex justify-content-start">
+      @if (this.hasDepartments) {
       <button id="btnAddEmployee" (click)="addButtonClick($event)" class="btn btn-success"><fa-icon [icon]="faPlusCircle"></fa-icon>&nbsp;Add New</button>
+      } @else {
+      <div class="text-light bg-info border border-primary rounded rounded-3 p-1 mt-1"><fa-icon [icon]="faInfoCircle"></fa-icon>&nbsp;You must create at least one department before adding or editing employees</div>
+      }
     </div>
   </div>
   <div class="col-md-1"></div>
@@ -28,7 +33,11 @@
   <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
-      <employee-table #childEmployeeTable (reloadAfterClientEditClick)="reloadAfterClientEditClick($event)" (showStatusMessage)="showStatusMessage($event)"></employee-table>
+      <employee-table #childEmployeeTable
+                      (reloadAfterClientEditClick)="reloadAfterClientEditClick($event)"
+                      (showStatusMessage)="showStatusMessage($event)"
+                      [hasDepartments]="this.hasDepartments">
+      </employee-table>
       <fieldset class="border border-primary rounded rounded-3 p-3 mb-3">
         <legend>Employee Information</legend>
         <div class="row mb-3">
@@ -92,11 +101,13 @@
           </div>
         </div>
       </fieldset>
+      @if (this.hasDepartments) {
       <div class="row mb-3">
         <div class="col-md-12">
           <button class="btn btn-success" type="submit"><fa-icon [icon]="this.saveButtonIcon"></fa-icon>&nbsp;{{ this.submitButtonText }}</button>
         </div>
       </div>
+      }
     </div>
     <div class="col-md-1"></div>
   </div>

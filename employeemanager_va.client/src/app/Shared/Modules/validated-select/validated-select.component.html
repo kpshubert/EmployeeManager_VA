@@ -2,6 +2,25 @@
   <div class="row mb-2">
     <div class="col-md-12">
       <div class="form-floating mb-1">
+        <!--
+        <ng-select [id]="label.toLowerCase().replace(' ', '-')"
+                   [formControl]="control"
+                   (input)="onInput($event)"
+                   (blur)="onTouched($event)"
+                   [required]="required"
+                   class="form-select"
+                   [class.is-invalid]="isInvalid"
+                   [items]="this.receivedSelectOptions"
+                   (change)="onOptionsChange()"
+                   placeholder="--please select--">
+          @for(option of this.receivedSelectOptions; track option.key) {
+          <ng-option
+                     [value]="option.key.toString()">
+            {{ option.value }}
+          </ng-option>
+          }
+        </ng-select>
+          -->
         <select [id]="label.toLowerCase().replace(' ', '-')"
                 [formControl]="control"
                 (input)="onInput($event)"
@@ -10,7 +29,7 @@
                 class="form-control"
                 [class.is-invalid]="isInvalid">
           <option value="">--please select--</option>
-          @for(option of selectOptions; track option.key) {
+          @for(option of this.receivedSelectOptions; track option.key) {
           <option value="{{ option.key }}">
             {{ option.value }}
           </option>
