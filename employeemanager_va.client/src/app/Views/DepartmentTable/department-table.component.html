@@ -1,4 +1,4 @@
-    @if (departments.length > 0) {
+    @if (departments !== null && departments.length > 0) {
 <p-table #dtDepartments
          [value]="this.departments"
          [columns]="columnNames"

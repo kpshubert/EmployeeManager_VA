@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { EventEmitter, Output, Input } from '@angular/core';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { faWindowClose, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Table, TableModule } from 'primeng/table';
 import { EmployeeService } from '../../Services/Employee/employee.service';
@@ -15,7 +15,8 @@ import { ConfirmationService } from 'primeng/api';
   templateUrl: './employee-table.component.html',
   styleUrl: './employee-table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     ConfirmDialogModule,
     ButtonModule,
     TableModule
@@ -46,10 +47,12 @@ export class EmployeeTable implements OnInit {
   applyFilterGlobal($event: any, stringVal: any) {
     this.dtEmployees?.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
   }
-  constructor(private employeeService: EmployeeService, private confirmationService: ConfirmationService) {
+  constructor(private employeeService: EmployeeService,
+    private confirmationService: ConfirmationService
+  ) {
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.employees = await this.employeeService.getEmployees(0, 'list', '');
   }
 
