@@ -1,4 +1,4 @@
-This is my "answer to" someone who tried to indicate I couldn't pretty quickly "spin up" a .NET Core (Version 8 in this case) Project with Angular (Version 20) on the "client side." My total time in this is less than two weeks, and less than full time at that!
+This is my "answer to" someone who tried to indicate I couldn't pretty quickly "spin up" a .NET Core (Version 8 in this case) Project with Angular (Version 20) on the "client side." My total time in this is less than two months, and far less than full time at that!
 
 Obviously, this is not complete for even the meager activities it preforms, but it's a good start.
 
