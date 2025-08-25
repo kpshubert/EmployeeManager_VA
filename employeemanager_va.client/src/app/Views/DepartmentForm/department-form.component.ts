@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Department } from '../..//Models/department';
@@ -11,6 +11,9 @@ import { ObjToKeysPipe } from '../../Pipes/objToKeys';
 import { valHooks } from 'jquery';
 import { SelectOptions } from '../../Models/select-options.data';
 import { ActivatedRoute } from '@angular/router';
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { LoadingDataComponent } from '../../Shared/Modules/loading-data/loading-data.component';
 
 @Component({
   selector: 'department-form',
@@ -38,9 +41,12 @@ export class DepartmentFormComponent implements OnInit {
     isAssigned: false
   };
 
-  departmentForm: FormGroup;
-
-  constructor( private route: ActivatedRoute, private departmentService: DepartmentService, private fb: FormBuilder, library: FaIconLibrary) {
+  constructor(public overlay: Overlay,
+    public viewContainerRef: ViewContainerRef,
+    private route: ActivatedRoute,
+    private departmentService: DepartmentService,
+    private fb: FormBuilder,
+    library: FaIconLibrary) {
     this.departmentForm = this.fb.group({
     });
   }
@@ -62,14 +68,18 @@ export class DepartmentFormComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.openLoadingPanel();
     this.department = await this.departmentService.getDepartment(0);
     this.departments = await this.departmentService.getDepartments(0, 'list', '');
     this.setInvalidMessages();
+    this.closeLoadingPanel();
   }
 
   @ViewChild('childDepartmentTable') childDepartmentTable: DepartmentTable | undefined;
   @ViewChild('departmentNameControl') departmentNameControl: ValidatedTextboxComponent | undefined;
 
+  loadingOverlayRef!: OverlayRef;
+  departmentForm: FormGroup;
   title = 'EmployeeManager_VA.client';
   faCheckCircle = faCheckCircle;
   faAsterisk = faAsterisk;
@@ -174,5 +184,28 @@ export class DepartmentFormComponent implements OnInit {
     returnValue = returnValue && nameIsValid;
   
     return returnValue;
+  }
+
+  openLoadingPanel() {
+    const config = new OverlayConfig();
+    config.positionStrategy = this.overlay.position()
+      .global()
+      .centerHorizontally()
+      .centerVertically();
+    config.hasBackdrop = true;
+
+    this.loadingOverlayRef = this.overlay.create(config);
+    this.loadingOverlayRef.attach(new ComponentPortal(LoadingDataComponent, this.viewContainerRef));
+  }
+
+  closeLoadingPanel() {
+    this.loadingOverlayRef.dispose();
+  }
+
+  togglePanel() {
+    this.openLoadingPanel();
+    setTimeout(() => {
+      this.closeLoadingPanel();
+    }, 5000);
   }
 }

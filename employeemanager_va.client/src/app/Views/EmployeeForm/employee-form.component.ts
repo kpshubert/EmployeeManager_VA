@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { faAsterisk, faCheckCircle, faUser, faWindowClose, faSave, faPlusCircle, faExclamationTriangle, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Employee } from '../../Models/employee';
@@ -11,10 +11,13 @@ import { ValidatedTextboxComponent } from '../../Shared/Modules/validated-textbo
 import { ValidatedSelectComponent } from '../../Shared/Modules/validated-select/validated-select.component';
 import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { ObjToKeysPipe } from '../../Pipes/objToKeys';
-import { valHooks } from 'jquery';
 import { SelectOptions } from '../../Models/select-options.data';
 import { ActivatedRoute } from '@angular/router';import { HttpClient } from '@angular/common/http';
 import { SelectOptionsService } from '../../Services/SelectOptions/select-options.service';
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { LoadingDataComponent } from '../../Shared/Modules/loading-data/loading-data.component';
+import { valHooks } from 'jquery';
 
 @Component({
   selector: 'employee-form',
@@ -65,9 +68,14 @@ export class EmployeeFormComponent implements OnInit {
     isAssigned: false
   };
 
-  employeeForm: FormGroup;
-
-  constructor(private route: ActivatedRoute, private employeeService: EmployeeService, private departmentService: DepartmentService, private selectOptionsService: SelectOptionsService, private fb: FormBuilder, library: FaIconLibrary) {
+  constructor(private route: ActivatedRoute,
+    private employeeService: EmployeeService,
+    private departmentService: DepartmentService,
+    private selectOptionsService: SelectOptionsService,
+    private fb: FormBuilder, library: FaIconLibrary,
+    public overlay: Overlay,
+    public viewContainerRef: ViewContainerRef
+ ) {
     this.employeeForm = this.fb.group({
     });
   }
@@ -96,7 +104,8 @@ export class EmployeeFormComponent implements OnInit {
     this.setInvalidMessages();
   }
 
-  async ngOnInit() : Promise<void> {
+  async ngOnInit(): Promise<void> {
+    this.openLoadingPanel();
     this.departments = await this.departmentService.getDepartments(0, 'list', '');
     this.hasDepartments = this.departments != null && this.departments.length > 0;
     this.departmentOptions = await this.createDepartmentOptions();
@@ -104,6 +113,7 @@ export class EmployeeFormComponent implements OnInit {
     this.employeeDepartmentControl?.onOptionsChange();
     this.employee = await this.employeeService.getEmployee(0);
     this.setInvalidMessages();
+    this.closeLoadingPanel();
   }
 
   @ViewChild('childEmployeeTable') childEmployeeTable: EmployeeTable | undefined;
@@ -113,6 +123,8 @@ export class EmployeeFormComponent implements OnInit {
   @ViewChild('employeeEmailControl') employeeEmailControl: ValidatedTextboxComponent | undefined;
   @ViewChild('employeeDepartmentControl') employeeDepartmentControl: ValidatedSelectComponent | undefined;
 
+  employeeForm: FormGroup;
+  loadingOverlayRef!: OverlayRef;
   title = 'EmployeeManager_VA.client';
   faCheckCircle = faCheckCircle;
   faAsterisk = faAsterisk;
@@ -131,6 +143,7 @@ export class EmployeeFormComponent implements OnInit {
   selectOptions: SelectOptions[] = [];
 
   async Submit() {
+    this.openLoadingPanel();
     this.setInvalidMessages();
     if (this.employeeForm.valid && this.customControlsAreValid()) {
       let newDepartmentId: number = parseInt(this.employee['departmentIdString'], 10);
@@ -151,6 +164,7 @@ export class EmployeeFormComponent implements OnInit {
     } else {
       this.showStatusMessage({ MessageText: 'Form has invalid data.', TimeoutIn: 5 });
     }
+    this.closeLoadingPanel();
   }
 
   addButtonClick(event: any) {
@@ -247,10 +261,35 @@ export class EmployeeFormComponent implements OnInit {
 
     let departmentRecords: Department[] = await this.departmentService.getDepartments(0, 'list', '');
 
+    if (departmentRecords !== null) {
     for (let departmentOption of departmentRecords) {
       let departmentOpt = { key: departmentOption.idString, value: departmentOption.name }
       departmentOptions.push(departmentOpt);
+      }
     }
     return departmentOptions;
+  }
+
+  openLoadingPanel() {
+    const config = new OverlayConfig();
+    config.positionStrategy = this.overlay.position()
+      .global()
+      .centerHorizontally()
+      .centerVertically();
+    config.hasBackdrop = true;
+
+    this.loadingOverlayRef = this.overlay.create(config);
+    this.loadingOverlayRef.attach(new ComponentPortal(LoadingDataComponent, this.viewContainerRef));
+  }
+
+  closeLoadingPanel() {
+    this.loadingOverlayRef.dispose();
+  }
+
+  togglePanel() {
+    this.openLoadingPanel();
+    setTimeout(() => {
+      this.closeLoadingPanel();
+    }, 5000);
   }
 }
